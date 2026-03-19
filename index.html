@@ -36,6 +36,8 @@
       --input-bg:  #0d0d0f;
       --active-ring: #e85d04;
       --toggle-bg: #26262e;
+      --op-plus:   #39ff6e;
+      --op-minus:  #6b9fff;
     }
     :root[data-theme="light"] {
       --bg:        #f0ede8;
@@ -57,6 +59,8 @@
       --input-bg:  #f0ede8;
       --active-ring: #e85d04;
       --toggle-bg: #e8e5e0;
+      --op-plus:   #1a9e3f;
+      --op-minus:  #2255cc;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -97,6 +101,20 @@
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .version-badge {
+      font-size: 11px;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+      color: var(--text-sub);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2px 6px;
+      letter-spacing: 0.05em;
     }
     .theme-toggle {
       display: flex;
@@ -124,14 +142,34 @@
       font-family: 'Share Tech Mono', monospace;
       font-size: 42px;
       letter-spacing: 0.08em;
-      padding: 18px 20px;
-      border-radius: 16px;
+      padding: 18px 20px 10px;
+      border-radius: 16px 16px 0 0;
       text-align: right;
       box-shadow: var(--display-glow), inset 0 2px 8px rgba(0,0,0,0.4);
-      margin-bottom: 14px;
       transition: box-shadow 0.3s;
       overflow: hidden;
       white-space: nowrap;
+    }
+
+    /* ── Sub Display (unit conversion) ── */
+    .sub-display {
+      background: var(--display-bg);
+      border-radius: 0 0 16px 16px;
+      padding: 4px 20px 12px;
+      text-align: right;
+      margin-bottom: 14px;
+      min-height: 28px;
+      border-top: 1px solid #ffffff0a;
+    }
+    .sub-display-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: #39ff6e88;
+      letter-spacing: 0.05em;
+      transition: opacity 0.2s;
+    }
+    .sub-display-text.hidden {
+      opacity: 0;
     }
 
     /* ── Input rows ── */
@@ -139,22 +177,59 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      margin-bottom: 14px;
+      margin-bottom: 8px;
     }
     .input-row {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
+      transition: opacity 0.2s;
     }
+
+    /* op-toggle placeholder for row A */
+    .op-spacer {
+      width: 32px;
+      flex-shrink: 0;
+    }
+
+    /* op-toggle button (rows B+) */
+    .op-toggle {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1.5px solid var(--border);
+      background: var(--surface2);
+      color: var(--op-plus);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      line-height: 1;
+    }
+    .op-toggle.minus {
+      color: var(--op-minus);
+      border-color: color-mix(in srgb, var(--op-minus) 30%, transparent);
+    }
+    .op-toggle:hover {
+      background: var(--key-num-hover);
+      transform: scale(1.08);
+    }
+
     .input-label {
       font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.08em;
       color: var(--text-sub);
-      width: 20px;
+      width: 16px;
       text-align: center;
       flex-shrink: 0;
     }
+
     input[type="text"] {
       flex: 1;
       padding: 10px 14px;
@@ -175,6 +250,57 @@
     }
     input[type="text"]::placeholder { color: var(--border); }
 
+    /* del-row placeholder for rows A/B */
+    .del-spacer {
+      width: 26px;
+      flex-shrink: 0;
+    }
+
+    /* delete row button (rows C+) */
+    .del-row {
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-sub);
+      font-size: 13px;
+      cursor: pointer;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      font-weight: 700;
+    }
+    .del-row:hover {
+      background: #ff4d4d1a;
+      color: #ff6b6b;
+      border-color: #ff6b6b44;
+    }
+
+    /* ── Add row button ── */
+    .add-row-btn {
+      width: 100%;
+      padding: 9px;
+      border-radius: 10px;
+      border: 1.5px dashed var(--border);
+      background: transparent;
+      color: var(--text-sub);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 14px;
+      letter-spacing: 0.04em;
+    }
+    .add-row-btn:hover {
+      border-color: var(--active-ring);
+      color: var(--active-ring);
+      background: color-mix(in srgb, var(--active-ring) 5%, transparent);
+    }
+
     /* ── Keyboard hint ── */
     .kb-hint {
       display: flex;
@@ -187,6 +313,7 @@
       background: var(--surface2);
       border-radius: 8px;
       border: 1px solid var(--border);
+      flex-wrap: wrap;
     }
     .kb-hint .tag {
       background: var(--key-util);
@@ -223,7 +350,7 @@
     }
     .key.util {
       background: var(--key-util);
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text-sub);
@@ -239,10 +366,7 @@
     .key:active { transform: scale(0.95); }
     .key.wide { grid-column: span 2; }
 
-    /* ── Copy result button ── */
-    .key[data-action="copyResultToA"] { font-size: 12px; }
-
-    /* ── Separator ── */
+    /* ── Sep ── */
     .sep {
       height: 1px;
       background: var(--border);
@@ -273,6 +397,15 @@
       opacity: 1;
     }
 
+    /* row entry animation */
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .input-row.new {
+      animation: rowIn 0.2s ease forwards;
+    }
+
     @media (max-width: 380px) {
       .display { font-size: 34px; }
       .key { height: 54px; font-size: 18px; }
@@ -283,7 +416,7 @@
 <div class="app">
 
   <div class="header">
-    <h1>⏱ Time Calc</h1>
+    <h1>⏱ Time Calc <span class="version-badge">v1.3</span></h1>
     <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
       <span class="icon" id="themeIcon">☀️</span>
       <span id="themeLabel">Light</span>
@@ -291,50 +424,52 @@
   </div>
 
   <div id="display" class="display">00:00:00</div>
-
-  <div class="inputs">
-    <div class="input-row">
-      <span class="input-label">A</span>
-      <input id="tcA" type="text" placeholder="HH:MM:SS" readonly />
-    </div>
-    <div class="input-row">
-      <span class="input-label">B</span>
-      <input id="tcB" type="text" placeholder="HH:MM:SS" readonly />
-    </div>
+  <div class="sub-display">
+    <span class="sub-display-text hidden" id="subDisplay"></span>
   </div>
 
+  <div class="inputs" id="inputsContainer"></div>
+
+  <button class="add-row-btn" id="addRowBtn">＋ 行を追加 (最大10行)</button>
+
   <div class="kb-hint">
-    <span>⌨️ キーボード対応：</span>
+    <span>⌨️</span>
     <span class="tag">0–9</span>
     <span class="tag">+</span>
     <span class="tag">-</span>
-    <span class="tag">Enter/=</span>
+    <span class="tag">Enter</span>
     <span class="tag">⌫</span>
     <span class="tag">C</span>
-    <span class="tag">Tab で A/B 切替</span>
+    <span class="tag">Tab で行切替</span>
+    <span class="tag">A〜J で行選択</span>
   </div>
 
   <div class="keypad" id="keypad">
-    <button class="key util" data-action="useA">A</button>
-    <button class="key util" data-action="useB">B</button>
+    <!-- Row 1: util -->
+    <button class="key util" data-action="prevRow">↑行</button>
+    <button class="key util" data-action="nextRow">↓行</button>
     <button class="key util" data-action="copyResultToA">→A</button>
     <button class="key util" data-action="clear">C</button>
 
+    <!-- Row 2 -->
     <button class="key" data-num="7">7</button>
     <button class="key" data-num="8">8</button>
     <button class="key" data-num="9">9</button>
     <button class="key op" data-op="add">+</button>
 
+    <!-- Row 3 -->
     <button class="key" data-num="4">4</button>
     <button class="key" data-num="5">5</button>
     <button class="key" data-num="6">6</button>
     <button class="key op" data-op="sub">−</button>
 
+    <!-- Row 4 -->
     <button class="key" data-num="1">1</button>
     <button class="key" data-num="2">2</button>
     <button class="key" data-num="3">3</button>
     <button class="key util" data-action="back">⌫</button>
 
+    <!-- Row 5 -->
     <button class="key wide" data-num="0">0</button>
     <button class="key util" data-action="colon">:</button>
     <button class="key op" data-op="calc">=</button>
@@ -345,19 +480,21 @@
 <div class="toast" id="toast"></div>
 
 <script>
+  /* ─── Constants ─── */
+  const LABELS = 'ABCDEFGHIJ';
+
   /* ─── State ─── */
-  let activeField   = "tcA";
-  let pendingOp     = null;      // "add" | "sub" | null
-  let memorySeconds = null;
-  let rawDigitsA    = "";
-  let rawDigitsB    = "";
+  let rows        = [];   // [{id, label, op, digits}]
+  let activeRowId = null;
+  let rowCounter  = 0;
 
   /* ─── Elements ─── */
-  const displayEl  = document.getElementById("display");
-  const tcAEl      = document.getElementById("tcA");
-  const tcBEl      = document.getElementById("tcB");
-  const keypadEl   = document.getElementById("keypad");
-  const toastEl    = document.getElementById("toast");
+  const displayEl   = document.getElementById("display");
+  const subDisplayEl= document.getElementById("subDisplay");
+  const inputsEl    = document.getElementById("inputsContainer");
+  const addRowBtnEl = document.getElementById("addRowBtn");
+  const keypadEl    = document.getElementById("keypad");
+  const toastEl     = document.getElementById("toast");
 
   /* ─── Theme toggle ─── */
   const html        = document.documentElement;
@@ -372,25 +509,22 @@
     themeLabel.textContent = isDark ? "Dark" : "Light";
   });
 
-  /* ─── Active field helpers ─── */
-  function getActiveEl()     { return activeField === "tcB" ? tcBEl : tcAEl; }
-  function getActiveDigits() { return activeField === "tcB" ? rawDigitsB : rawDigitsA; }
-  function setActiveDigits(d) {
-    if (activeField === "tcB") rawDigitsB = d; else rawDigitsA = d;
-  }
-  function setActive(field) {
-    activeField = field;
-    tcAEl.classList.toggle("active-field", field === "tcA");
-    tcBEl.classList.toggle("active-field", field === "tcB");
-    getActiveEl().focus();
-  }
-
-  tcAEl.addEventListener("focus", () => setActive("tcA"));
-  tcBEl.addEventListener("focus", () => setActive("tcB"));
-
   /* ─── Time helpers ─── */
+
+  /**
+   * digits → "HH:MM:SS" with overflow normalization.
+   * e.g. "009000" → mm=90 → normalize → "01:30:00"
+   *      "013000" → hh=1, mm=30 → "01:30:00"
+   */
   function formatHMSFromDigits(digits) {
     digits = digits.replace(/\D/g, "").slice(0, 6).padStart(6, "0");
+    const hh = parseInt(digits.slice(0, 2), 10);
+    const mm = parseInt(digits.slice(2, 4), 10);
+    const ss = parseInt(digits.slice(4, 6), 10);
+    // Normalize if mm or ss overflows (e.g. 9000 → mm=90 → 01:30:00)
+    if (mm >= 60 || ss >= 60) {
+      return formatTime(hh * 3600 + mm * 60 + ss);
+    }
     return digits.slice(0,2) + ":" + digits.slice(2,4) + ":" + digits.slice(4,6);
   }
 
@@ -401,7 +535,7 @@
     const parts = clean.split(":");
     if (parts.length !== 3) return null;
     const [hh, mm, ss] = parts.map(Number);
-    if ([hh, mm, ss].some(v => Number.isNaN(v) || v < 0) || mm > 59 || ss > 59) return null;
+    if ([hh, mm, ss].some(v => isNaN(v) || v < 0) || mm > 59 || ss > 59) return null;
     const total = hh * 3600 + mm * 60 + ss;
     return neg ? -total : total;
   }
@@ -416,6 +550,141 @@
     return sign + p(hh) + ":" + p(mm) + ":" + p(ss);
   }
 
+  /* ─── Display update ─── */
+  function updateDisplay() {
+    let total = 0;
+    for (const row of rows) {
+      if (!row.digits) continue;
+      const hms = formatHMSFromDigits(row.digits);
+      const sec = parseTime(hms);
+      if (sec === null) continue;
+      total += row.op === "+" ? sec : -sec;
+    }
+    displayEl.textContent = formatTime(total);
+
+    // Sub display: unit conversion
+    if (total !== 0) {
+      const sign = total < 0 ? "−" : "";
+      const abs  = Math.abs(total);
+      const mins = Math.floor(abs / 60);
+      const secs = abs;
+      subDisplayEl.textContent = `${sign}${mins.toLocaleString()}分  /  ${sign}${secs.toLocaleString()}秒`;
+      subDisplayEl.classList.remove("hidden");
+    } else {
+      subDisplayEl.classList.add("hidden");
+    }
+  }
+
+  /* ─── Row management ─── */
+  function addRow(op = "+", animate = false) {
+    if (rows.length >= 10) { showToast("最大10行まです"); return; }
+    const id    = `row${rowCounter++}`;
+    const label = LABELS[rows.length] || `R${rows.length}`;
+    rows.push({ id, label, op: rows.length === 0 ? "+" : op, digits: "" });
+    renderRows(animate ? id : null);
+    setActiveRow(id);
+    updateDisplay();
+  }
+
+  function deleteRow(id) {
+    const idx = rows.findIndex(r => r.id === id);
+    if (idx < 2) return; // protect A and B
+    rows.splice(idx, 1);
+    // Re-label all rows
+    rows.forEach((r, i) => { r.label = LABELS[i] || `R${i}`; });
+    renderRows();
+    const newIdx = Math.min(idx, rows.length - 1);
+    if (rows[newIdx]) setActiveRow(rows[newIdx].id);
+    updateDisplay();
+  }
+
+  function toggleRowOp(id) {
+    const row = rows.find(r => r.id === id);
+    if (!row || row.label === "A") return;
+    row.op = row.op === "+" ? "-" : "+";
+    renderRows();
+    setActiveRow(id);
+    updateDisplay();
+  }
+
+  function renderRows(animateId = null) {
+    inputsEl.innerHTML = "";
+    rows.forEach((row, idx) => {
+      const div = document.createElement("div");
+      div.className = "input-row" + (animateId === row.id ? " new" : "");
+      div.id = row.id + "-row";
+
+      // Op toggle or spacer
+      if (idx > 0) {
+        const opBtn = document.createElement("button");
+        opBtn.className = "op-toggle" + (row.op === "-" ? " minus" : "");
+        opBtn.textContent = row.op === "+" ? "+" : "−";
+        opBtn.tabIndex = -1;
+        opBtn.title = "クリックで +/− 切替";
+        opBtn.addEventListener("pointerdown", e => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleRowOp(row.id);
+        });
+        div.appendChild(opBtn);
+      } else {
+        const sp = document.createElement("span");
+        sp.className = "op-spacer";
+        div.appendChild(sp);
+      }
+
+      // Label
+      const labelEl = document.createElement("span");
+      labelEl.className = "input-label";
+      labelEl.textContent = row.label;
+      div.appendChild(labelEl);
+
+      // Input
+      const input = document.createElement("input");
+      input.type = "text";
+      input.readOnly = true;
+      input.placeholder = "HH:MM:SS";
+      input.id = row.id + "-input";
+      if (row.digits) input.value = formatHMSFromDigits(row.digits);
+      if (row.id === activeRowId) input.classList.add("active-field");
+      input.addEventListener("pointerdown", () => setActiveRow(row.id));
+      div.appendChild(input);
+
+      // Delete button or spacer
+      if (idx >= 2) {
+        const delBtn = document.createElement("button");
+        delBtn.className = "del-row";
+        delBtn.textContent = "×";
+        delBtn.tabIndex = -1;
+        delBtn.addEventListener("pointerdown", e => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteRow(row.id);
+        });
+        div.appendChild(delBtn);
+      } else {
+        const sp = document.createElement("span");
+        sp.className = "del-spacer";
+        div.appendChild(sp);
+      }
+
+      inputsEl.appendChild(div);
+    });
+  }
+
+  function setActiveRow(id) {
+    activeRowId = id;
+    document.querySelectorAll("#inputsContainer input").forEach(inp => {
+      inp.classList.remove("active-field");
+    });
+    const el = document.getElementById(id + "-input");
+    if (el) el.classList.add("active-field");
+  }
+
+  function getActiveRow() {
+    return rows.find(r => r.id === activeRowId) || rows[0] || null;
+  }
+
   /* ─── Toast ─── */
   let toastTimer = null;
   function showToast(msg) {
@@ -425,85 +694,107 @@
     toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
   }
 
-  /* ─── Core logic ─── */
+  /* ─── Core digit logic ─── */
   function appendDigit(d) {
-    let digits = (getActiveDigits() + d).replace(/\D/g, "").slice(0, 6);
-    setActiveDigits(digits);
-    getActiveEl().value = digits ? formatHMSFromDigits(digits) : "";
+    const row = getActiveRow();
+    if (!row) return;
+    row.digits = (row.digits + d).replace(/\D/g, "").slice(0, 6);
+    const inp = document.getElementById(row.id + "-input");
+    if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    updateDisplay();
   }
 
   function doBack() {
-    const digits = getActiveDigits().slice(0, -1);
-    setActiveDigits(digits);
-    getActiveEl().value = digits ? formatHMSFromDigits(digits) : "";
+    const row = getActiveRow();
+    if (!row) return;
+    row.digits = row.digits.slice(0, -1);
+    const inp = document.getElementById(row.id + "-input");
+    if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    updateDisplay();
   }
 
   function doClear() {
-    tcAEl.value = tcBEl.value = "";
-    rawDigitsA = rawDigitsB = "";
-    pendingOp = null;
-    memorySeconds = null;
+    // Reset all rows to 2 empty rows
+    rows = [];
+    rowCounter = 0;
+    addRow("+");  // A
+    addRow("+");  // B
     displayEl.textContent = "00:00:00";
+    subDisplayEl.classList.add("hidden");
+    setActiveRow(rows[0].id);
+    renderRows();
   }
 
-  function doCalc() {
-    if (!pendingOp || memorySeconds === null) {
-      showToast("先に A を入力し + / − を押してください");
-      return;
+  /* ─── Op / action handlers ─── */
+  function handleOp(op) {
+    const row = getActiveRow();
+    if (op === "add" || op === "sub") {
+      // Set active row's operator (A is always +)
+      if (row && row.label !== "A") {
+        row.op = op === "add" ? "+" : "-";
+        renderRows();
+        setActiveRow(row.id);
+        updateDisplay();
+      } else {
+        // A row: move to next row
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx < rows.length - 1) setActiveRow(rows[idx + 1].id);
+      }
+    } else if (op === "calc") {
+      // Show formatted result as toast
+      const txt = displayEl.textContent.trim();
+      const sec = parseTime(txt);
+      if (sec === null) { showToast("入力してください"); return; }
+      const abs  = Math.abs(sec);
+      const sign = sec < 0 ? "−" : "";
+      const mins = Math.floor(abs / 60);
+      showToast(`${txt}  (${sign}${mins.toLocaleString()}分)`);
     }
-    const bSec = parseTime(tcBEl.value);
-    if (bSec === null) { showToast("B が不正です（HH:MM:SS）"); return; }
-    const result = pendingOp === "add"
-      ? memorySeconds + bSec
-      : memorySeconds - bSec;
-    displayEl.textContent = formatTime(result);
   }
 
   function handleAction(action) {
     switch (action) {
       case "back":  doBack();  break;
       case "clear": doClear(); break;
-      case "useA":  setActive("tcA"); break;
-      case "useB":  setActive("tcB"); break;
 
-      /* ─── BUG FIX: copyResultToA ─── */
+      case "prevRow": {
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx > 0) setActiveRow(rows[idx - 1].id);
+        break;
+      }
+      case "nextRow": {
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx < rows.length - 1) setActiveRow(rows[idx + 1].id);
+        break;
+      }
+
       case "copyResultToA": {
         const txt = displayEl.textContent.trim();
         if (!txt.match(/^-?\d{2}:\d{2}:\d{2}$/)) { showToast("結果がありません"); return; }
-        tcAEl.value = txt;
-        // 生 digits 同期: 符号を除いた数字列のみ保持（桁数制限なし→スライスしない）
-        rawDigitsA = txt.replace(/[^0-9]/g, "").slice(-6);
-        // B をクリア
-        rawDigitsB = "";
-        tcBEl.value = "";
-        pendingOp = null;
-        memorySeconds = null;
-        setActive("tcA");
+        const sec = parseTime(txt);
+        if (sec === null) { showToast("結果が不正です"); return; }
+        if (sec < 0) { showToast("負の値はコピーできません"); return; }
+
+        // Reset to 2 rows, put result in A
+        rows = [];
+        rowCounter = 0;
+        addRow("+"); // A
+        addRow("+"); // B
+        // Set A's value
+        const absTime = txt.replace(/^-/, "");
+        rows[0].digits = absTime.replace(/:/g, "");
+        renderRows();
+        const ainp = document.getElementById(rows[0].id + "-input");
+        if (ainp) ainp.value = absTime;
+        setActiveRow(rows[1].id); // focus B for next input
+        updateDisplay();
         showToast("結果を A にコピーしました");
         break;
       }
 
-      /* ─── BUG FIX: colon は rawDigits に影響させない ─── */
-      case "colon": {
-        // rawDigits ベースで管理しているため : ボタンは不要だが
-        // ユーザーが「:」を押したとき、現在の rawDigits 表示はそのままにする
-        // （何もしないか、ヒントを出す）
+      case "colon":
         showToast("数字を連続入力すると自動的に : が入ります");
         break;
-      }
-    }
-  }
-
-  function handleOp(op) {
-    if (op === "add" || op === "sub") {
-      const aSec = parseTime(tcAEl.value);
-      if (aSec === null) { showToast("A が不正です（HH:MM:SS）"); return; }
-      memorySeconds = aSec;
-      pendingOp = op;
-      displayEl.textContent = formatTime(memorySeconds);
-      setActive("tcB");
-    } else if (op === "calc") {
-      doCalc();
     }
   }
 
@@ -515,37 +806,48 @@
     const op     = key.getAttribute("data-op");
     const action = key.getAttribute("data-action");
     if (num    !== null) appendDigit(num);
-    else if (op)        handleOp(op);
-    else if (action)    handleAction(action);
+    else if (op)         handleOp(op);
+    else if (action)     handleAction(action);
   });
+
+  /* ─── Add row button ─── */
+  addRowBtnEl.addEventListener("click", () => addRow("+", true));
 
   /* ─── Keyboard input ─── */
   document.addEventListener("keydown", e => {
-    // Tab: A/B 切替
+    // Tab: row cycling
     if (e.key === "Tab") {
       e.preventDefault();
-      setActive(activeField === "tcA" ? "tcB" : "tcA");
+      const idx     = rows.findIndex(r => r.id === activeRowId);
+      const nextIdx = e.shiftKey
+        ? Math.max(0, idx - 1)
+        : Math.min(rows.length - 1, idx + 1);
+      setActiveRow(rows[nextIdx].id);
       return;
     }
-    // 数字
+    // Digits
     if (/^[0-9]$/.test(e.key)) { appendDigit(e.key); return; }
-    // 演算子
-    if (e.key === "+" ) { handleOp("add");  return; }
-    if (e.key === "-" ) { handleOp("sub");  return; }
+    // Operators
+    if (e.key === "+") { handleOp("add");  return; }
+    if (e.key === "-") { handleOp("sub");  return; }
     if (e.key === "=" || e.key === "Enter") { handleOp("calc"); return; }
-    // バックスペース
+    // Backspace / Clear
     if (e.key === "Backspace") { doBack(); return; }
-    // クリア
     if (e.key === "c" || e.key === "C" || e.key === "Escape") { doClear(); return; }
-    // A/B 選択
-    if (e.key === "a" || e.key === "A") { setActive("tcA"); return; }
-    if (e.key === "b" || e.key === "B") { setActive("tcB"); return; }
+    // Row selection by label letter (A–J)
+    const letterIdx = LABELS.indexOf(e.key.toUpperCase());
+    if (letterIdx >= 0 && letterIdx < rows.length) {
+      setActiveRow(rows[letterIdx].id);
+      return;
+    }
   });
 
   /* ─── Init ─── */
-  setActive("tcA");
+  addRow("+"); // Row A
+  addRow("+"); // Row B
+  setActiveRow(rows[0].id);
 
-  /* ─── Service Worker 登録 ─── */
+  /* ─── Service Worker ─── */
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
       navigator.serviceWorker.register("./sw.js")
