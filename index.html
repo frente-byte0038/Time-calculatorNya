@@ -161,6 +161,15 @@
       min-height: 28px;
       border-top: 1px solid #ffffff0a;
     }
+    .formula-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      color: #39ff6ecc;
+      letter-spacing: 0.05em;
+      padding: 2px 0 4px;
+      transition: opacity 0.2s;
+    }
+    .formula-text.hidden { opacity: 0; pointer-events: none; }
     .sub-display-text {
       font-family: 'Share Tech Mono', monospace;
       font-size: 13px;
@@ -410,21 +419,75 @@
       .display { font-size: 34px; }
       .key { height: 54px; font-size: 18px; }
     }
+
+    /* ── Mode toggle ── */
+    .mode-toggle-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+    .mode-toggle {
+      display: flex;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 3px;
+      gap: 3px;
+    }
+    .mode-btn {
+      padding: 6px 22px;
+      border-radius: 7px;
+      border: none;
+      background: transparent;
+      color: var(--text-sub);
+      font-family: 'Outfit', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      -webkit-user-select: none; user-select: none;
+    }
+    .mode-btn.active {
+      background: var(--key-op);
+      color: #fff;
+      box-shadow: 0 2px 8px color-mix(in srgb, var(--key-op) 40%, transparent);
+    }
+    .mode-btn:not(.active):hover { color: var(--text); }
+
+    /* ── Realtime base display ── */
+    .realtime-base {
+      display: none;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      color: #39ff6e88;
+      letter-spacing: 0.05em;
+      text-align: center;
+      margin-bottom: 4px;
+    }
+    .realtime-base.visible { display: block; }
   </style>
 </head>
 <body>
 <div class="app">
 
   <div class="header">
-    <h1>⏱ Time Calc <span class="version-badge">v1.3</span></h1>
+    <h1>⏱ Time Calc <span class="version-badge">v2</span></h1>
     <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
       <span class="icon" id="themeIcon">☀️</span>
       <span id="themeLabel">Light</span>
     </button>
   </div>
 
+  <div class="mode-toggle-wrap">
+    <div class="mode-toggle" id="modeToggle">
+      <button class="mode-btn active" data-mode="duration">時間計算</button>
+      <button class="mode-btn" data-mode="realtime">実時間</button>
+    </div>
+  </div>
+
   <div id="display" class="display">00:00:00</div>
   <div class="sub-display">
+    <div class="formula-text hidden" id="formulaDisplay"></div>
     <span class="sub-display-text hidden" id="subDisplay"></span>
   </div>
 
@@ -432,7 +495,7 @@
 
   <button class="add-row-btn" id="addRowBtn">＋ 行を追加 (最大10行)</button>
 
-  <div class="kb-hint">
+  <div class="kb-hint" id="kbHint">
     <span>⌨️</span>
     <span class="tag">0–9</span>
     <span class="tag">+</span>
@@ -487,10 +550,16 @@
   let rows        = [];   // [{id, label, op, digits}]
   let activeRowId = null;
   let rowCounter  = 0;
+  let mode        = "duration"; // "duration" | "realtime"
+  let realtimeInterval = null;
+  let realtimeReady    = false; // true after = is pressed in realtime mode
+  let realtimeBaseStr  = "";   // current time string captured at = press
+  let realtimeResultStr = "";  // frozen calculated time captured at = press
 
   /* ─── Elements ─── */
-  const displayEl   = document.getElementById("display");
-  const subDisplayEl= document.getElementById("subDisplay");
+  const displayEl      = document.getElementById("display");
+  const subDisplayEl   = document.getElementById("subDisplay");
+  const formulaDisplayEl = document.getElementById("formulaDisplay");
   const inputsEl    = document.getElementById("inputsContainer");
   const addRowBtnEl = document.getElementById("addRowBtn");
   const keypadEl    = document.getElementById("keypad");
@@ -507,6 +576,56 @@
     html.setAttribute("data-theme", isDark ? "light" : "dark");
     themeIcon.textContent  = isDark ? "🌙" : "☀️";
     themeLabel.textContent = isDark ? "Dark" : "Light";
+  });
+
+  /* ─── Mode ─── */
+  function getCurrentTimeSec() {
+    const now = new Date();
+    return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  }
+
+  const HINT_DURATION = `<span>⌨️</span>
+    <span class="tag">0–9</span>
+    <span class="tag">+</span>
+    <span class="tag">-</span>
+    <span class="tag">Enter</span>
+    <span class="tag">⌫</span>
+    <span class="tag">C</span>
+    <span class="tag">Tab で行切替</span>
+    <span class="tag">A〜J で行選択</span>`;
+
+  const HINT_REALTIME = `<span>⏱</span>
+    <span class="tag">0–9</span> で加算時間を入力
+    <span class="tag">=</span> で現在時刻に加算（サブ表示に基準時刻を固定表示）
+    <span class="tag">C</span> でリセット
+    <span class="tag">Tab</span> で行切替`;
+
+  const kbHintEl = document.getElementById("kbHint");
+
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-mode") === m);
+    });
+    kbHintEl.innerHTML = m === "realtime" ? HINT_REALTIME : HINT_DURATION;
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
+    formulaDisplayEl.classList.add("hidden");
+    if (m === "realtime") {
+      clearInterval(realtimeInterval);
+      realtimeInterval = setInterval(updateDisplay, 1000);
+    } else {
+      clearInterval(realtimeInterval);
+      realtimeInterval = null;
+    }
+    updateDisplay();
+  }
+
+  document.getElementById("modeToggle").addEventListener("click", e => {
+    const btn = e.target.closest(".mode-btn");
+    if (!btn) return;
+    setMode(btn.getAttribute("data-mode"));
   });
 
   /* ─── Time helpers ─── */
@@ -540,6 +659,17 @@
     return neg ? -total : total;
   }
 
+  function formatOffset(sec) {
+    const s  = Math.abs(sec);
+    const ss = s % 60;
+    const r  = (s - ss) / 60;
+    const mm = r % 60;
+    const hh = (r - mm) / 60;
+    const p  = n => String(n).padStart(2, "0");
+    if (hh > 0) return `${hh}:${p(mm)}:${p(ss)}`;
+    return `${mm}:${p(ss)}`;
+  }
+
   function formatTime(sec) {
     const sign = sec < 0 ? "-" : "";
     let s = Math.abs(sec);
@@ -560,18 +690,35 @@
       if (sec === null) continue;
       total += row.op === "+" ? sec : -sec;
     }
-    displayEl.textContent = formatTime(total);
 
-    // Sub display: unit conversion
-    if (total !== 0) {
-      const sign = total < 0 ? "−" : "";
-      const abs  = Math.abs(total);
-      const mins = Math.floor(abs / 60);
-      const secs = abs;
-      subDisplayEl.textContent = `${sign}${mins.toLocaleString()}分  /  ${sign}${secs.toLocaleString()}秒`;
+    if (mode === "realtime") {
+      const nowSec = getCurrentTimeSec();
+      subDisplayEl.textContent = formatTime(nowSec);
       subDisplayEl.classList.remove("hidden");
+      if (realtimeReady) {
+        displayEl.textContent = realtimeResultStr;
+        const sign = total >= 0 ? "+" : "−";
+        formulaDisplayEl.textContent = total !== 0
+          ? `${realtimeBaseStr}${sign}${formatOffset(Math.abs(total))}`
+          : realtimeBaseStr;
+        formulaDisplayEl.classList.remove("hidden");
+      } else {
+        displayEl.textContent = formatTime(nowSec);
+        formulaDisplayEl.classList.add("hidden");
+      }
     } else {
-      subDisplayEl.classList.add("hidden");
+      displayEl.textContent = formatTime(total);
+      if (total !== 0) {
+        const sign    = total < 0 ? "−" : "";
+        const abs     = Math.abs(total);
+        const mins    = Math.floor(abs / 60);
+        const remSecs = abs % 60;
+        const minsStr = remSecs > 0 ? `${mins.toLocaleString()}分${remSecs}秒` : `${mins.toLocaleString()}分`;
+        subDisplayEl.textContent = `${sign}${minsStr}  /  ${sign}${abs.toLocaleString()}秒`;
+        subDisplayEl.classList.remove("hidden");
+      } else {
+        subDisplayEl.classList.add("hidden");
+      }
     }
   }
 
@@ -581,6 +728,7 @@
     const id    = `row${rowCounter++}`;
     const label = LABELS[rows.length] || `R${rows.length}`;
     rows.push({ id, label, op: rows.length === 0 ? "+" : op, digits: "" });
+    if (mode === "realtime") realtimeReady = false;
     renderRows(animate ? id : null);
     setActiveRow(id);
     updateDisplay();
@@ -589,6 +737,7 @@
   function deleteRow(id) {
     const idx = rows.findIndex(r => r.id === id);
     if (idx < 2) return; // protect A and B
+    if (mode === "realtime") realtimeReady = false;
     rows.splice(idx, 1);
     // Re-label all rows
     rows.forEach((r, i) => { r.label = LABELS[i] || `R${i}`; });
@@ -602,6 +751,7 @@
     const row = rows.find(r => r.id === id);
     if (!row || row.label === "A") return;
     row.op = row.op === "+" ? "-" : "+";
+    if (mode === "realtime") realtimeReady = false;
     renderRows();
     setActiveRow(id);
     updateDisplay();
@@ -701,6 +851,7 @@
     row.digits = (row.digits + d).replace(/\D/g, "").slice(0, 6);
     const inp = document.getElementById(row.id + "-input");
     if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    if (mode === "realtime") realtimeReady = false;
     updateDisplay();
   }
 
@@ -710,17 +861,21 @@
     row.digits = row.digits.slice(0, -1);
     const inp = document.getElementById(row.id + "-input");
     if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    if (mode === "realtime") realtimeReady = false;
     updateDisplay();
   }
 
   function doClear() {
-    // Reset all rows to 2 empty rows
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
     rows = [];
     rowCounter = 0;
     addRow("+");  // A
     addRow("+");  // B
     displayEl.textContent = "00:00:00";
     subDisplayEl.classList.add("hidden");
+    formulaDisplayEl.classList.add("hidden");
     setActiveRow(rows[0].id);
     renderRows();
   }
@@ -741,14 +896,30 @@
         if (idx < rows.length - 1) setActiveRow(rows[idx + 1].id);
       }
     } else if (op === "calc") {
-      // Show formatted result as toast
       const txt = displayEl.textContent.trim();
-      const sec = parseTime(txt);
-      if (sec === null) { showToast("入力してください"); return; }
-      const abs  = Math.abs(sec);
-      const sign = sec < 0 ? "−" : "";
-      const mins = Math.floor(abs / 60);
-      showToast(`${txt}  (${sign}${mins.toLocaleString()}分)`);
+      if (mode === "realtime") {
+        let total = 0;
+        for (const row of rows) {
+          if (!row.digits) continue;
+          const hms = formatHMSFromDigits(row.digits);
+          const sec = parseTime(hms);
+          if (sec === null) continue;
+          total += row.op === "+" ? sec : -sec;
+        }
+        const nowSec = getCurrentTimeSec();
+        const resultSec = ((nowSec + total) % 86400 + 86400) % 86400;
+        realtimeReady     = true;
+        realtimeBaseStr   = formatTime(nowSec);
+        realtimeResultStr = formatTime(resultSec);
+        updateDisplay();
+      } else {
+        const sec = parseTime(txt);
+        if (sec === null) { showToast("入力してください"); return; }
+        const abs  = Math.abs(sec);
+        const sign = sec < 0 ? "−" : "";
+        const mins = Math.floor(abs / 60);
+        showToast(`${txt}  (${sign}${mins.toLocaleString()}分)`);
+      }
     }
   }
 
@@ -769,6 +940,7 @@
       }
 
       case "copyResultToA": {
+        if (mode === "realtime") { showToast("時間計算モードで使用してください"); return; }
         const txt = displayEl.textContent.trim();
         if (!txt.match(/^-?\d{2}:\d{2}:\d{2}$/)) { showToast("結果がありません"); return; }
         const sec = parseTime(txt);
@@ -815,14 +987,18 @@
 
   /* ─── Keyboard input ─── */
   document.addEventListener("keydown", e => {
-    // Tab: row cycling
+    // Tab: row navigation / add row on last row
     if (e.key === "Tab") {
       e.preventDefault();
-      const idx     = rows.findIndex(r => r.id === activeRowId);
-      const nextIdx = e.shiftKey
-        ? Math.max(0, idx - 1)
-        : Math.min(rows.length - 1, idx + 1);
-      setActiveRow(rows[nextIdx].id);
+      const idx = rows.findIndex(r => r.id === activeRowId);
+      if (!e.shiftKey && idx === rows.length - 1 && idx > 0) {
+        addRow("+", true); // on last row (B or later): add new row
+      } else {
+        const nextIdx = e.shiftKey
+          ? Math.max(0, idx - 1)
+          : Math.min(rows.length - 1, idx + 1);
+        setActiveRow(rows[nextIdx].id);
+      }
       return;
     }
     // Digits

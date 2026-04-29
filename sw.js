@@ -1,4 +1,4 @@
-const CACHE = "timecalc-v1";
+const CACHE = "timecalc-v2";
 const ASSETS = [
   "./index.html",
   "./manifest.json",
