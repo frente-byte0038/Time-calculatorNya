@@ -1,4 +1,4 @@
-# ⏱ Time Calc v1.3
+# ⏱ Time Calc v2.0
 
 A lightweight, PWA-ready time calculator for HH:MM:SS arithmetic — built for professionals who work with time every day.
 
