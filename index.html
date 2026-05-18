@@ -161,6 +161,15 @@
       min-height: 28px;
       border-top: 1px solid #ffffff0a;
     }
+    .formula-text {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      color: #39ff6ecc;
+      letter-spacing: 0.05em;
+      padding: 2px 0 4px;
+      transition: opacity 0.2s;
+    }
+    .formula-text.hidden { opacity: 0; pointer-events: none; }
     .sub-display-text {
       font-family: 'Share Tech Mono', monospace;
       font-size: 13px;
@@ -462,7 +471,7 @@
 <div class="app">
 
   <div class="header">
-    <h1>⏱ Time Calc <span class="version-badge">v1.4</span></h1>
+    <h1>⏱ Time Calc <span class="version-badge">v2</span></h1>
     <button class="theme-toggle" id="themeToggle" aria-label="テーマ切替">
       <span class="icon" id="themeIcon">☀️</span>
       <span id="themeLabel">Light</span>
@@ -478,6 +487,7 @@
 
   <div id="display" class="display">00:00:00</div>
   <div class="sub-display">
+    <div class="formula-text hidden" id="formulaDisplay"></div>
     <span class="sub-display-text hidden" id="subDisplay"></span>
   </div>
 
@@ -544,10 +554,12 @@
   let realtimeInterval = null;
   let realtimeReady    = false; // true after = is pressed in realtime mode
   let realtimeBaseStr  = "";   // current time string captured at = press
+  let realtimeResultStr = "";  // frozen calculated time captured at = press
 
   /* ─── Elements ─── */
-  const displayEl   = document.getElementById("display");
-  const subDisplayEl= document.getElementById("subDisplay");
+  const displayEl      = document.getElementById("display");
+  const subDisplayEl   = document.getElementById("subDisplay");
+  const formulaDisplayEl = document.getElementById("formulaDisplay");
   const inputsEl    = document.getElementById("inputsContainer");
   const addRowBtnEl = document.getElementById("addRowBtn");
   const keypadEl    = document.getElementById("keypad");
@@ -596,8 +608,10 @@
       btn.classList.toggle("active", btn.getAttribute("data-mode") === m);
     });
     kbHintEl.innerHTML = m === "realtime" ? HINT_REALTIME : HINT_DURATION;
-    realtimeReady   = false;
-    realtimeBaseStr = "";
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
+    formulaDisplayEl.classList.add("hidden");
     if (m === "realtime") {
       clearInterval(realtimeInterval);
       realtimeInterval = setInterval(updateDisplay, 1000);
@@ -645,6 +659,17 @@
     return neg ? -total : total;
   }
 
+  function formatOffset(sec) {
+    const s  = Math.abs(sec);
+    const ss = s % 60;
+    const r  = (s - ss) / 60;
+    const mm = r % 60;
+    const hh = (r - mm) / 60;
+    const p  = n => String(n).padStart(2, "0");
+    if (hh > 0) return `${hh}:${p(mm)}:${p(ss)}`;
+    return `${mm}:${p(ss)}`;
+  }
+
   function formatTime(sec) {
     const sign = sec < 0 ? "-" : "";
     let s = Math.abs(sec);
@@ -668,23 +693,18 @@
 
     if (mode === "realtime") {
       const nowSec = getCurrentTimeSec();
+      subDisplayEl.textContent = formatTime(nowSec);
+      subDisplayEl.classList.remove("hidden");
       if (realtimeReady) {
-        const resultSec = ((nowSec + total) % 86400 + 86400) % 86400;
-        displayEl.textContent = formatTime(resultSec);
-        const offsetStr = total !== 0
-          ? `  ${total >= 0 ? "+" : "−"}${formatTime(Math.abs(total))}`
-          : "";
-        subDisplayEl.textContent = `${realtimeBaseStr}${offsetStr}`; // frozen base
-        subDisplayEl.classList.remove("hidden");
+        displayEl.textContent = realtimeResultStr;
+        const sign = total >= 0 ? "+" : "−";
+        formulaDisplayEl.textContent = total !== 0
+          ? `${realtimeBaseStr}${sign}${formatOffset(Math.abs(total))}`
+          : realtimeBaseStr;
+        formulaDisplayEl.classList.remove("hidden");
       } else {
         displayEl.textContent = formatTime(nowSec);
-        if (total !== 0) {
-          const sign = total >= 0 ? "+" : "−";
-          subDisplayEl.textContent = `追加  ${sign}${formatTime(Math.abs(total))}`;
-          subDisplayEl.classList.remove("hidden");
-        } else {
-          subDisplayEl.classList.add("hidden");
-        }
+        formulaDisplayEl.classList.add("hidden");
       }
     } else {
       displayEl.textContent = formatTime(total);
@@ -846,14 +866,16 @@
   }
 
   function doClear() {
-    realtimeReady   = false;
-    realtimeBaseStr = "";
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
     rows = [];
     rowCounter = 0;
     addRow("+");  // A
     addRow("+");  // B
     displayEl.textContent = "00:00:00";
     subDisplayEl.classList.add("hidden");
+    formulaDisplayEl.classList.add("hidden");
     setActiveRow(rows[0].id);
     renderRows();
   }
@@ -876,8 +898,19 @@
     } else if (op === "calc") {
       const txt = displayEl.textContent.trim();
       if (mode === "realtime") {
-        realtimeReady   = true;
-        realtimeBaseStr = formatTime(getCurrentTimeSec()); // freeze base time
+        let total = 0;
+        for (const row of rows) {
+          if (!row.digits) continue;
+          const hms = formatHMSFromDigits(row.digits);
+          const sec = parseTime(hms);
+          if (sec === null) continue;
+          total += row.op === "+" ? sec : -sec;
+        }
+        const nowSec = getCurrentTimeSec();
+        const resultSec = ((nowSec + total) % 86400 + 86400) % 86400;
+        realtimeReady     = true;
+        realtimeBaseStr   = formatTime(nowSec);
+        realtimeResultStr = formatTime(resultSec);
         updateDisplay();
       } else {
         const sec = parseTime(txt);
