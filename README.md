@@ -8,29 +8,36 @@ A lightweight, PWA-ready time calculator for HH:MM:SS arithmetic — built for p
 
 ## Features
 
-- **Multi-row addition** — Add up to 10 time entries (A through J) at once
-- **Subtraction support** — Toggle any row between `+` and `−` with a single tap
-- **Auto-formatting** — Enter digits continuously and they format into HH:MM:SS automatically
-- **Minute input conversion** — Enter values like `9000` or `13000` and they are automatically normalized (e.g. 90 minutes → `01:30:00`)
-- **Unit conversion display** — Results shown in minutes and seconds below the main display
-- **Copy result to A** — Instantly carry the result forward into row A for chained calculations
-- **Keyboard support** — Full keyboard control: `0–9`, `+`, `-`, `Enter`, `Backspace`, `C`, `Tab`, `A–J`
-- **Dark / Light theme** — Toggle between themes at any time
-- **PWA** — Installable on mobile and desktop, works offline
+- **Multi-row arithmetic — Add/Subtract up to 10 time entries (A through J).
+- **Toggle mode — Easily switch rows between + and − with a single tap.
+- **Intelligent input — Digits auto-format into HH:MM:SS. Numeric input (e.g., 9000) is normalized (90 mins → 01:30:00).
+- **Flexible display — Instant conversion to total minutes and seconds.
+- **Workflow optimization — "Copy to A" feature for chained calculations.
+- **Keyboard-first design — Full control via 0–9, +, -, Enter, Backspace, C, Tab, and A–J.
+- **Theme support — Seamless toggle between Dark and Light modes.
+- **PWA-ready — Installable on desktop and mobile for offline access.
 
 ---
 
 ## Usage
 
-| Action | Keyboard | Button |
-|--------|----------|--------|
-| Input digits | `0–9` | Number keys |
-| Delete last digit | `Backspace` | `⌫` |
-| Clear all | `C` / `Escape` | `C` |
-| Switch rows | `Tab` / `A–J` | `↑行` `↓行` |
-| Calculate | `Enter` / `=` | `=` |
-| Copy result to A | — | `→A` |
+Action	Keyboard Shortcut
+Input digits	0–9
+Delete last digit	Backspace
+Clear all	C or Escape
+Switch rows	Tab or A–J
+Calculate	Enter or =
+Copy result to A	Click →A button
 
 ---
 
+## Engineering & Philosophy
+This project leverages modern AI-assisted development workflows to ensure high utility and rapid iteration.
+•	Tech Stack: Next.js (React), Tailwind CSS, PWA standards.
+•	AI-Driven: Developed using localized LLMs (via Ollama) and VS Code/Cline to ensure maximum efficiency and performance.
+•	Design Goal: To eliminate menu-hunting and provide a frictionless interface for time-sensitive production environments.
+
+---
+
+## License
 © 2026 frente-byte0038 — Personal use only. Commercial use is prohibited.
