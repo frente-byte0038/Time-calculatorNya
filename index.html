@@ -71,21 +71,18 @@
       color: var(--text);
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
-      padding: clamp(16px, 5vw, 24px) clamp(8px, 3vw, 12px) clamp(32px, 8vw, 48px);
+      padding: 24px 12px 48px;
       transition: background 0.3s, color 0.3s;
-      overflow-y: auto;
     }
 
     .app {
-      width: 95%;
+      width: 100%;
       max-width: 400px;
-      max-height: 100vh;
-      overflow-y: auto;
       background: var(--surface);
       border-radius: 24px;
-      padding: clamp(16px, 4vw, 20px);
+      padding: 20px;
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       transition: background 0.3s, box-shadow 0.3s;
@@ -96,20 +93,20 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: clamp(12px, 3vw, 18px);
+      margin-bottom: 18px;
     }
     .header h1 {
-      font-size: clamp(15px, 4vw, 17px);
+      font-size: 17px;
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text);
       display: flex;
       align-items: center;
-      gap: clamp(4px, 2vw, 8px);
+      gap: 8px;
     }
     .version-badge {
-      font-size: clamp(10px, 3vw, 11px);
+      font-size: 11px;
       font-weight: 600;
       font-family: 'Share Tech Mono', monospace;
       color: var(--text-sub);
@@ -122,14 +119,14 @@
     .theme-toggle {
       display: flex;
       align-items: center;
-      gap: clamp(4px, 2vw, 8px);
+      gap: 8px;
       background: var(--toggle-bg);
       border: 1px solid var(--border);
       border-radius: 999px;
-      padding: clamp(4px, 1.5vw, 5px) clamp(8px, 3vw, 12px);
+      padding: 5px 12px;
       cursor: pointer;
       font-family: 'Outfit', sans-serif;
-      font-size: clamp(12px, 3.5vw, 13px);
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-sub);
       transition: all 0.2s;
@@ -143,9 +140,9 @@
       background: var(--display-bg);
       color: var(--display-fg);
       font-family: 'Share Tech Mono', monospace;
-      font-size: clamp(32px, 10vw, 42px);
+      font-size: 42px;
       letter-spacing: 0.08em;
-      padding: clamp(12px, 4vw, 18px) clamp(12px, 5vw, 20px) 10px;
+      padding: 18px 20px 10px;
       border-radius: 16px 16px 0 0;
       text-align: right;
       box-shadow: var(--display-glow), inset 0 2px 8px rgba(0,0,0,0.4);
@@ -153,20 +150,14 @@
       overflow: hidden;
       white-space: nowrap;
     }
-    @media (max-width: 350px) {
-      .display {
-        white-space: normal;
-        overflow-wrap: break-word;
-      }
-    }
 
-    /* ── Sub Display ── */
+    /* ── Sub Display (unit conversion) ── */
     .sub-display {
       background: var(--display-bg);
       border-radius: 0 0 16px 16px;
-      padding: 4px clamp(12px, 5vw, 20px) 12px;
+      padding: 4px 20px 12px;
       text-align: right;
-      margin-bottom: clamp(10px, 3vw, 14px);
+      margin-bottom: 14px;
       min-height: 28px;
       border-top: 1px solid #ffffff0a;
     }
@@ -194,21 +185,23 @@
     .inputs {
       display: flex;
       flex-direction: column;
-      gap: clamp(4px, 2vw, 8px);
+      gap: 8px;
       margin-bottom: 8px;
     }
     .input-row {
       display: flex;
       align-items: center;
-      gap: clamp(4px, 2vw, 8px);
+      gap: 8px;
       transition: opacity 0.2s;
     }
 
+    /* op-toggle placeholder for row A */
     .op-spacer {
-      width: clamp(24px, 6vw, 32px);
+      width: 32px;
       flex-shrink: 0;
     }
 
+    /* op-toggle button (rows B+) */
     .op-toggle {
       width: 32px;
       height: 32px;
@@ -241,7 +234,7 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       color: var(--text-sub);
-      width: clamp(12px, 3vw, 16px);
+      width: 16px;
       text-align: center;
       flex-shrink: 0;
     }
@@ -251,7 +244,7 @@
       padding: 10px 14px;
       border-radius: 10px;
       border: 1.5px solid var(--border);
-      background: var(--input-padding-bg, var(--input-bg));
+      background: var(--input-bg);
       color: var(--text);
       font-family: 'Share Tech Mono', monospace;
       font-size: 20px;
@@ -266,14 +259,16 @@
     }
     input[type="text"]::placeholder { color: var(--border); }
 
+    /* del-row placeholder for rows A/B */
     .del-spacer {
-      width: clamp(20px, 4vw, 26px);
+      width: 26px;
       flex-shrink: 0;
     }
 
+    /* delete row button (rows C+) */
     .del-row {
-      width: clamp(22px, 5vw, 26px);
-      height: clamp(22px, 5vw, 26px);
+      width: 26px;
+      height: 26px;
       border-radius: 6px;
       border: 1px solid var(--border);
       background: transparent;
@@ -296,7 +291,7 @@
     /* ── Add row button ── */
     .add-row-btn {
       width: 100%;
-      padding: clamp(8px, 2vw, 9px);
+      padding: 9px;
       border-radius: 10px;
       border: 1.5px dashed var(--border);
       background: transparent;
@@ -306,7 +301,7 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: clamp(10px, 3vw, 14px);
+      margin-bottom: 14px;
       letter-spacing: 0.04em;
     }
     .add-row-btn:hover {
@@ -319,11 +314,11 @@
     .kb-hint {
       display: flex;
       align-items: center;
-      gap: clamp(4px, 2vw, 6px);
+      gap: 6px;
       font-size: 11px;
       color: var(--text-sub);
       margin-bottom: 14px;
-      padding: clamp(4px, 2vw, 6px) clamp(8px, 2vw, 10px);
+      padding: 6px 10px;
       background: var(--surface2);
       border-radius: 8px;
       border: 1px solid var(--border);
@@ -342,13 +337,13 @@
     .keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: clamp(4px, 2vw, 8px);
+      gap: 8px;
       -webkit-user-select: none; user-select: none;
     }
     .key {
       padding: 0;
-      height: clamp(54px, 12vw, 62px);
-      border-radius: clamp(10px, 3vw, 14px);
+      height: 62px;
+      border-radius: 14px;
       border: 1px solid var(--border);
       font-family: 'Outfit', sans-serif;
       font-size: 20px;
@@ -384,7 +379,7 @@
     .sep {
       height: 1px;
       background: var(--border);
-      margin: clamp(10px, 3vw, 14px) 0;
+      margin: 14px 0;
     }
 
     /* ── Toast ── */
@@ -535,357 +530,507 @@
     <button class="key" data-num="1">1</button>
     <button class="key" data-num="2">2</button>
     <button class="key" data-num="3">3</button>
-    <button class="key" data-num="0">0</button>
+    <button class="key util" data-action="back">⌫</button>
+
+    <!-- Row 5 -->
+    <button class="key wide" data-num="0">0</button>
+    <button class="key util" data-action="colon">:</button>
+    <button class="key op" data-op="calc">=</button>
   </div>
 
+</div>
+
+<div class="toast" id="toast"></div>
+
 <script>
-// ── State ──────────────────────────────────────────────────────────────────
-const MAX_ROWS = 10;
-const LABELS = 'ABCDEFGHIJ';
-let rows = [];        // [{raw, sign, rowEl, inputEl}]
-let activeRowIdx = 0;
-let mode = 'duration';
-let toastTimer = null;
+  /* ─── Constants ─── */
+  const LABELS = 'ABCDEFGHIJ';
 
-// ── DOM refs ───────────────────────────────────────────────────────────────
-const display     = document.getElementById('display');
-const formulaEl   = document.getElementById('formulaDisplay');
-const subEl       = document.getElementById('subDisplay');
-const inputsCont  = document.getElementById('inputsContainer');
-const addRowBtn   = document.getElementById('addRowBtn');
-const themeToggle = document.getElementById('themeToggle');
-const themeIcon   = document.getElementById('themeIcon');
-const themeLabel  = document.getElementById('themeLabel');
-const modeToggle  = document.getElementById('modeToggle');
-const keypad      = document.getElementById('keypad');
-const html        = document.documentElement;
+  /* ─── State ─── */
+  let rows        = [];   // [{id, label, op, digits}]
+  let activeRowId = null;
+  let rowCounter  = 0;
+  let mode        = "duration"; // "duration" | "realtime"
+  let realtimeInterval = null;
+  let realtimeReady    = false; // true after = is pressed in realtime mode
+  let realtimeBaseStr  = "";   // current time string captured at = press
+  let realtimeResultStr = "";  // frozen calculated time captured at = press
 
-// toast element
-const toast = document.createElement('div');
-toast.className = 'toast';
-document.body.appendChild(toast);
+  /* ─── Elements ─── */
+  const displayEl      = document.getElementById("display");
+  const subDisplayEl   = document.getElementById("subDisplay");
+  const formulaDisplayEl = document.getElementById("formulaDisplay");
+  const inputsEl    = document.getElementById("inputsContainer");
+  const addRowBtnEl = document.getElementById("addRowBtn");
+  const keypadEl    = document.getElementById("keypad");
+  const toastEl     = document.getElementById("toast");
 
-// ── Time helpers ───────────────────────────────────────────────────────────
-function formatRaw(raw) {
-  const p = raw.padStart(6, '0');
-  return `${p.slice(0,2)}:${p.slice(2,4)}:${p.slice(4,6)}`;
-}
+  /* ─── Theme toggle ─── */
+  const html        = document.documentElement;
+  const themeToggle = document.getElementById("themeToggle");
+  const themeIcon   = document.getElementById("themeIcon");
+  const themeLabel  = document.getElementById("themeLabel");
 
-function rawToSeconds(raw) {
-  const p = raw.padStart(6, '0');
-  return parseInt(p.slice(0,2),10)*3600
-       + parseInt(p.slice(2,4),10)*60
-       + parseInt(p.slice(4,6),10);
-}
+  themeToggle.addEventListener("click", () => {
+    const isDark = html.getAttribute("data-theme") === "dark";
+    html.setAttribute("data-theme", isDark ? "light" : "dark");
+    themeIcon.textContent  = isDark ? "🌙" : "☀️";
+    themeLabel.textContent = isDark ? "Dark" : "Light";
+  });
 
-function secondsToDisplay(total) {
-  const neg = total < 0;
-  const abs = Math.abs(total);
-  const hh  = Math.floor(abs / 3600);
-  const mm  = Math.floor((abs % 3600) / 60);
-  const ss  = abs % 60;
-  const s   = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
-  return neg ? `−${s}` : s;
-}
-
-function secondsToRaw(secs) {
-  const abs = Math.abs(secs);
-  const hh  = Math.min(Math.floor(abs / 3600), 99);
-  const mm  = Math.floor((abs % 3600) / 60);
-  const ss  = abs % 60;
-  return `${String(hh).padStart(2,'0')}${String(mm).padStart(2,'0')}${String(ss).padStart(2,'0')}`;
-}
-
-// ── Theme ──────────────────────────────────────────────────────────────────
-function applyTheme(theme) {
-  html.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme);
-  if (theme === 'dark') {
-    themeIcon.textContent = '☀️';
-    themeLabel.textContent = 'Light';
-  } else {
-    themeIcon.textContent = '🌙';
-    themeLabel.textContent = 'Dark';
+  /* ─── Mode ─── */
+  function getCurrentTimeSec() {
+    const now = new Date();
+    return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   }
-}
 
-themeToggle.addEventListener('click', () => {
-  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
-});
+  const HINT_DURATION = `<span>⌨️</span>
+    <span class="tag">0–9</span>
+    <span class="tag">+</span>
+    <span class="tag">-</span>
+    <span class="tag">Enter</span>
+    <span class="tag">⌫</span>
+    <span class="tag">C</span>
+    <span class="tag">Tab で行切替</span>
+    <span class="tag">A〜J で行選択</span>`;
 
-applyTheme(localStorage.getItem('theme') || 'dark');
+  const HINT_REALTIME = `<span>⏱</span>
+    <span class="tag">0–9</span> で加算時間を入力
+    <span class="tag">=</span> で現在時刻に加算（サブ表示に基準時刻を固定表示）
+    <span class="tag">C</span> でリセット
+    <span class="tag">Tab</span> で行切替`;
 
-// ── Mode toggle ────────────────────────────────────────────────────────────
-modeToggle.addEventListener('click', (e) => {
-  const btn = e.target.closest('.mode-btn');
-  if (!btn) return;
-  const next = btn.dataset.mode;
-  if (next === mode) return;
-  mode = next;
-  modeToggle.querySelectorAll('.mode-btn').forEach(b =>
-    b.classList.toggle('active', b.dataset.mode === mode)
-  );
-  recalculate();
-});
+  const kbHintEl = document.getElementById("kbHint");
 
-// ── Row creation ───────────────────────────────────────────────────────────
-function createRowEl(idx, sign) {
-  const isFirst = idx === 0;
-  const label = LABELS[idx];
-  const div = document.createElement('div');
-  div.className = 'input-row new';
-
-  if (isFirst) {
-    const sp = document.createElement('div');
-    sp.className = 'op-spacer';
-    div.appendChild(sp);
-  } else {
-    const opBtn = document.createElement('button');
-    opBtn.className = `op-toggle${sign === '-' ? ' minus' : ''}`;
-    opBtn.dataset.sign = sign;
-    opBtn.textContent = sign;
-    opBtn.addEventListener('click', () => {
-      const row = rows.find(r => r.rowEl === div);
-      if (!row) return;
-      row.sign = row.sign === '+' ? '-' : '+';
-      opBtn.dataset.sign = row.sign;
-      opBtn.textContent = row.sign;
-      opBtn.classList.toggle('minus', row.sign === '-');
-      setActive(rows.indexOf(row));
-      recalculate();
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll(".mode-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-mode") === m);
     });
-    div.appendChild(opBtn);
-  }
-
-  const labelEl = document.createElement('span');
-  labelEl.className = 'input-label';
-  labelEl.textContent = label;
-  div.appendChild(labelEl);
-
-  const input = document.createElement('input');
-  input.type = 'text';
-  input.setAttribute('inputmode', 'none');
-  input.readOnly = true;
-  input.value = '00:00:00';
-  input.placeholder = '00:00:00';
-  input.setAttribute('aria-label', `行 ${label}`);
-  input.addEventListener('focus', () => setActive(rows.findIndex(r => r.rowEl === div)));
-  input.addEventListener('pointerdown', (e) => { e.preventDefault(); input.focus(); });
-  div.appendChild(input);
-
-  if (isFirst) {
-    const sp = document.createElement('div');
-    sp.className = 'del-spacer';
-    div.appendChild(sp);
-  } else {
-    const delBtn = document.createElement('button');
-    delBtn.className = 'del-row';
-    delBtn.textContent = '×';
-    delBtn.setAttribute('aria-label', `行 ${label} を削除`);
-    delBtn.addEventListener('click', () => {
-      const rowIdx = rows.findIndex(r => r.rowEl === div);
-      if (rowIdx > 0) deleteRow(rowIdx);
-    });
-    div.appendChild(delBtn);
-  }
-
-  return { rowEl: div, inputEl: input };
-}
-
-// ── Row management ─────────────────────────────────────────────────────────
-function addRow(sign = '+') {
-  if (rows.length >= MAX_ROWS) { showToast('最大10行まで'); return; }
-  const idx = rows.length;
-  const { rowEl, inputEl } = createRowEl(idx, sign);
-  rows.push({ raw: '', sign: idx === 0 ? '+' : sign, rowEl, inputEl });
-  inputsCont.appendChild(rowEl);
-  addRowBtn.disabled = rows.length >= MAX_ROWS;
-  setActive(idx);
-  recalculate();
-}
-
-function deleteRow(idx) {
-  if (idx <= 0 || idx >= rows.length) return;
-  const snapshot = rows.map(r => ({ raw: r.raw, sign: r.sign }));
-  snapshot.splice(idx, 1);
-  rows = [];
-  inputsCont.innerHTML = '';
-  snapshot.forEach((s, i) => {
-    const { rowEl, inputEl } = createRowEl(i, s.sign);
-    rows.push({ raw: s.raw, sign: s.sign, rowEl, inputEl });
-    inputEl.value = s.raw ? formatRaw(s.raw) : '00:00:00';
-    inputsCont.appendChild(rowEl);
-  });
-  addRowBtn.disabled = rows.length >= MAX_ROWS;
-  setActive(Math.min(activeRowIdx, rows.length - 1));
-  recalculate();
-}
-
-// ── Active row ─────────────────────────────────────────────────────────────
-function setActive(idx) {
-  if (idx < 0 || idx >= rows.length) return;
-  activeRowIdx = idx;
-  rows.forEach((r, i) => r.inputEl.classList.toggle('active-field', i === activeRowIdx));
-  rows[activeRowIdx].inputEl.focus({ preventScroll: true });
-}
-
-function navigateRow(delta) {
-  setActive((activeRowIdx + delta + rows.length) % rows.length);
-}
-
-function selectRowByLabel(label) {
-  const idx = LABELS.indexOf(label.toUpperCase());
-  if (idx >= 0 && idx < rows.length) setActive(idx);
-}
-
-// ── Input logic ────────────────────────────────────────────────────────────
-function inputDigit(d) {
-  const row = rows[activeRowIdx];
-  if (!row || row.raw.length >= 6) return;
-  row.raw += d;
-  row.inputEl.value = formatRaw(row.raw);
-  recalculate();
-}
-
-function backspace() {
-  const row = rows[activeRowIdx];
-  if (!row || row.raw.length === 0) return;
-  row.raw = row.raw.slice(0, -1);
-  row.inputEl.value = row.raw ? formatRaw(row.raw) : '00:00:00';
-  recalculate();
-}
-
-function clearActive() {
-  const row = rows[activeRowIdx];
-  if (!row) return;
-  if (row.raw !== '') {
-    row.raw = '';
-    row.inputEl.value = '00:00:00';
-  } else {
-    rows.forEach(r => { r.raw = ''; r.inputEl.value = '00:00:00'; });
-  }
-  recalculate();
-}
-
-function setSign(sign) {
-  if (activeRowIdx === 0) return;
-  const row = rows[activeRowIdx];
-  if (!row) return;
-  row.sign = sign;
-  const opBtn = row.rowEl.querySelector('.op-toggle');
-  if (opBtn) {
-    opBtn.dataset.sign = sign;
-    opBtn.textContent = sign;
-    opBtn.classList.toggle('minus', sign === '-');
-  }
-  recalculate();
-}
-
-// ── Calculation ────────────────────────────────────────────────────────────
-function recalculate() {
-  if (rows.length === 0) {
-    display.textContent = '00:00:00';
-    formulaEl.classList.add('hidden');
-    subEl.classList.add('hidden');
-    return;
-  }
-
-  let total = 0;
-  const parts = [];
-  rows.forEach((row, i) => {
-    const secs = rawToSeconds(row.raw);
-    total += row.sign === '-' ? -secs : secs;
-    parts.push(i === 0 ? formatRaw(row.raw) : `${row.sign === '-' ? '−' : '+'} ${formatRaw(row.raw)}`);
-  });
-
-  if (mode === 'realtime') {
-    total = ((total % 86400) + 86400) % 86400;
-  }
-
-  display.textContent = secondsToDisplay(total);
-
-  if (rows.length > 1) {
-    formulaEl.textContent = parts.join(' ');
-    formulaEl.classList.remove('hidden');
-  } else {
-    formulaEl.classList.add('hidden');
-  }
-
-  const absMin = Math.floor(Math.abs(total) / 60);
-  if (absMin > 0 && mode === 'duration') {
-    subEl.textContent = `= ${total < 0 ? '−' : ''}${absMin} 分`;
-    subEl.classList.remove('hidden');
-  } else {
-    subEl.classList.add('hidden');
-  }
-}
-
-// ── Copy result to row A ───────────────────────────────────────────────────
-function copyResultToA() {
-  let total = 0;
-  rows.forEach(row => {
-    total += row.sign === '-' ? -rawToSeconds(row.raw) : rawToSeconds(row.raw);
-  });
-  if (mode === 'realtime') total = ((total % 86400) + 86400) % 86400;
-  if (total < 0) { showToast('マイナス値はコピー不可'); return; }
-
-  rows[0].raw = secondsToRaw(total);
-  rows[0].inputEl.value = formatRaw(rows[0].raw);
-  rows.slice(1).forEach(r => { r.raw = ''; r.inputEl.value = '00:00:00'; });
-  setActive(0);
-  recalculate();
-  showToast('結果を行Aにコピーしました');
-}
-
-// ── Toast ──────────────────────────────────────────────────────────────────
-function showToast(msg) {
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
-}
-
-// ── Keypad ─────────────────────────────────────────────────────────────────
-keypad.addEventListener('click', (e) => {
-  const key = e.target.closest('.key');
-  if (!key) return;
-  if (key.dataset.num !== undefined) {
-    inputDigit(key.dataset.num);
-  } else if (key.dataset.action) {
-    switch (key.dataset.action) {
-      case 'prevRow':       navigateRow(-1);    break;
-      case 'nextRow':       navigateRow(1);     break;
-      case 'clear':         clearActive();      break;
-      case 'copyResultToA': copyResultToA();    break;
+    kbHintEl.innerHTML = m === "realtime" ? HINT_REALTIME : HINT_DURATION;
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
+    formulaDisplayEl.classList.add("hidden");
+    if (m === "realtime") {
+      clearInterval(realtimeInterval);
+      realtimeInterval = setInterval(updateDisplay, 1000);
+    } else {
+      clearInterval(realtimeInterval);
+      realtimeInterval = null;
     }
-  } else if (key.dataset.op) {
-    setSign(key.dataset.op === 'add' ? '+' : '-');
+    updateDisplay();
   }
-});
 
-// ── Keyboard ───────────────────────────────────────────────────────────────
-document.addEventListener('keydown', (e) => {
-  if (e.target.tagName === 'INPUT' && !rows.some(r => r.inputEl === e.target)) return;
-  if (e.key >= '0' && e.key <= '9')       { inputDigit(e.key); e.preventDefault(); }
-  else if (e.key === '+')                  { setSign('+');       e.preventDefault(); }
-  else if (e.key === '-')                  { setSign('-');       e.preventDefault(); }
-  else if (e.key === 'Enter')              { navigateRow(1);     e.preventDefault(); }
-  else if (e.key === 'Backspace')          { backspace();        e.preventDefault(); }
-  else if (e.key === 'c' || e.key === 'C'){ clearActive();      e.preventDefault(); }
-  else if (e.key === 'Tab')               { navigateRow(e.shiftKey ? -1 : 1); e.preventDefault(); }
-  else if (/^[a-jA-J]$/.test(e.key))     { selectRowByLabel(e.key); e.preventDefault(); }
-});
+  document.getElementById("modeToggle").addEventListener("click", e => {
+    const btn = e.target.closest(".mode-btn");
+    if (!btn) return;
+    setMode(btn.getAttribute("data-mode"));
+  });
 
-// ── Add row button ─────────────────────────────────────────────────────────
-addRowBtn.addEventListener('click', () => addRow());
+  /* ─── Time helpers ─── */
 
-// ── Service Worker ─────────────────────────────────────────────────────────
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
-}
+  /**
+   * digits → "HH:MM:SS" with overflow normalization.
+   * e.g. "009000" → mm=90 → normalize → "01:30:00"
+   *      "013000" → hh=1, mm=30 → "01:30:00"
+   */
+  function formatHMSFromDigits(digits) {
+    digits = digits.replace(/\D/g, "").slice(0, 6).padStart(6, "0");
+    const hh = parseInt(digits.slice(0, 2), 10);
+    const mm = parseInt(digits.slice(2, 4), 10);
+    const ss = parseInt(digits.slice(4, 6), 10);
+    // Normalize if mm or ss overflows (e.g. 9000 → mm=90 → 01:30:00)
+    if (mm >= 60 || ss >= 60) {
+      return formatTime(hh * 3600 + mm * 60 + ss);
+    }
+    return digits.slice(0,2) + ":" + digits.slice(2,4) + ":" + digits.slice(4,6);
+  }
 
-// ── Init ───────────────────────────────────────────────────────────────────
-addRow();
+  function parseTime(hms) {
+    if (!hms) return null;
+    const neg   = hms.startsWith("-");
+    const clean = hms.replace(/^-/, "").trim();
+    const parts = clean.split(":");
+    if (parts.length !== 3) return null;
+    const [hh, mm, ss] = parts.map(Number);
+    if ([hh, mm, ss].some(v => isNaN(v) || v < 0) || mm > 59 || ss > 59) return null;
+    const total = hh * 3600 + mm * 60 + ss;
+    return neg ? -total : total;
+  }
+
+  function formatOffset(sec) {
+    const s  = Math.abs(sec);
+    const ss = s % 60;
+    const r  = (s - ss) / 60;
+    const mm = r % 60;
+    const hh = (r - mm) / 60;
+    const p  = n => String(n).padStart(2, "0");
+    if (hh > 0) return `${hh}:${p(mm)}:${p(ss)}`;
+    return `${mm}:${p(ss)}`;
+  }
+
+  function formatTime(sec) {
+    const sign = sec < 0 ? "-" : "";
+    let s = Math.abs(sec);
+    const ss = s % 60; s = (s - ss) / 60;
+    const mm = s % 60;
+    const hh = (s - mm) / 60;
+    const p  = n => String(n).padStart(2, "0");
+    return sign + p(hh) + ":" + p(mm) + ":" + p(ss);
+  }
+
+  /* ─── Display update ─── */
+  function updateDisplay() {
+    let total = 0;
+    for (const row of rows) {
+      if (!row.digits) continue;
+      const hms = formatHMSFromDigits(row.digits);
+      const sec = parseTime(hms);
+      if (sec === null) continue;
+      total += row.op === "+" ? sec : -sec;
+    }
+
+    if (mode === "realtime") {
+      const nowSec = getCurrentTimeSec();
+      subDisplayEl.textContent = formatTime(nowSec);
+      subDisplayEl.classList.remove("hidden");
+      if (realtimeReady) {
+        displayEl.textContent = realtimeResultStr;
+        const sign = total >= 0 ? "+" : "−";
+        formulaDisplayEl.textContent = total !== 0
+          ? `${realtimeBaseStr}${sign}${formatOffset(Math.abs(total))}`
+          : realtimeBaseStr;
+        formulaDisplayEl.classList.remove("hidden");
+      } else {
+        displayEl.textContent = formatTime(nowSec);
+        formulaDisplayEl.classList.add("hidden");
+      }
+    } else {
+      displayEl.textContent = formatTime(total);
+      if (total !== 0) {
+        const sign    = total < 0 ? "−" : "";
+        const abs     = Math.abs(total);
+        const mins    = Math.floor(abs / 60);
+        const remSecs = abs % 60;
+        const minsStr = remSecs > 0 ? `${mins.toLocaleString()}分${remSecs}秒` : `${mins.toLocaleString()}分`;
+        subDisplayEl.textContent = `${sign}${minsStr}  /  ${sign}${abs.toLocaleString()}秒`;
+        subDisplayEl.classList.remove("hidden");
+      } else {
+        subDisplayEl.classList.add("hidden");
+      }
+    }
+  }
+
+  /* ─── Row management ─── */
+  function addRow(op = "+", animate = false) {
+    if (rows.length >= 10) { showToast("最大10行まです"); return; }
+    const id    = `row${rowCounter++}`;
+    const label = LABELS[rows.length] || `R${rows.length}`;
+    rows.push({ id, label, op: rows.length === 0 ? "+" : op, digits: "" });
+    if (mode === "realtime") realtimeReady = false;
+    renderRows(animate ? id : null);
+    setActiveRow(id);
+    updateDisplay();
+  }
+
+  function deleteRow(id) {
+    const idx = rows.findIndex(r => r.id === id);
+    if (idx < 2) return; // protect A and B
+    if (mode === "realtime") realtimeReady = false;
+    rows.splice(idx, 1);
+    // Re-label all rows
+    rows.forEach((r, i) => { r.label = LABELS[i] || `R${i}`; });
+    renderRows();
+    const newIdx = Math.min(idx, rows.length - 1);
+    if (rows[newIdx]) setActiveRow(rows[newIdx].id);
+    updateDisplay();
+  }
+
+  function toggleRowOp(id) {
+    const row = rows.find(r => r.id === id);
+    if (!row || row.label === "A") return;
+    row.op = row.op === "+" ? "-" : "+";
+    if (mode === "realtime") realtimeReady = false;
+    renderRows();
+    setActiveRow(id);
+    updateDisplay();
+  }
+
+  function renderRows(animateId = null) {
+    inputsEl.innerHTML = "";
+    rows.forEach((row, idx) => {
+      const div = document.createElement("div");
+      div.className = "input-row" + (animateId === row.id ? " new" : "");
+      div.id = row.id + "-row";
+
+      // Op toggle or spacer
+      if (idx > 0) {
+        const opBtn = document.createElement("button");
+        opBtn.className = "op-toggle" + (row.op === "-" ? " minus" : "");
+        opBtn.textContent = row.op === "+" ? "+" : "−";
+        opBtn.tabIndex = -1;
+        opBtn.title = "クリックで +/− 切替";
+        opBtn.addEventListener("pointerdown", e => {
+          e.preventDefault();
+          e.stopPropagation();
+          toggleRowOp(row.id);
+        });
+        div.appendChild(opBtn);
+      } else {
+        const sp = document.createElement("span");
+        sp.className = "op-spacer";
+        div.appendChild(sp);
+      }
+
+      // Label
+      const labelEl = document.createElement("span");
+      labelEl.className = "input-label";
+      labelEl.textContent = row.label;
+      div.appendChild(labelEl);
+
+      // Input
+      const input = document.createElement("input");
+      input.type = "text";
+      input.readOnly = true;
+      input.placeholder = "HH:MM:SS";
+      input.id = row.id + "-input";
+      if (row.digits) input.value = formatHMSFromDigits(row.digits);
+      if (row.id === activeRowId) input.classList.add("active-field");
+      input.addEventListener("pointerdown", () => setActiveRow(row.id));
+      div.appendChild(input);
+
+      // Delete button or spacer
+      if (idx >= 2) {
+        const delBtn = document.createElement("button");
+        delBtn.className = "del-row";
+        delBtn.textContent = "×";
+        delBtn.tabIndex = -1;
+        delBtn.addEventListener("pointerdown", e => {
+          e.preventDefault();
+          e.stopPropagation();
+          deleteRow(row.id);
+        });
+        div.appendChild(delBtn);
+      } else {
+        const sp = document.createElement("span");
+        sp.className = "del-spacer";
+        div.appendChild(sp);
+      }
+
+      inputsEl.appendChild(div);
+    });
+  }
+
+  function setActiveRow(id) {
+    activeRowId = id;
+    document.querySelectorAll("#inputsContainer input").forEach(inp => {
+      inp.classList.remove("active-field");
+    });
+    const el = document.getElementById(id + "-input");
+    if (el) el.classList.add("active-field");
+  }
+
+  function getActiveRow() {
+    return rows.find(r => r.id === activeRowId) || rows[0] || null;
+  }
+
+  /* ─── Toast ─── */
+  let toastTimer = null;
+  function showToast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+  }
+
+  /* ─── Core digit logic ─── */
+  function appendDigit(d) {
+    const row = getActiveRow();
+    if (!row) return;
+    row.digits = (row.digits + d).replace(/\D/g, "").slice(0, 6);
+    const inp = document.getElementById(row.id + "-input");
+    if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    if (mode === "realtime") realtimeReady = false;
+    updateDisplay();
+  }
+
+  function doBack() {
+    const row = getActiveRow();
+    if (!row) return;
+    row.digits = row.digits.slice(0, -1);
+    const inp = document.getElementById(row.id + "-input");
+    if (inp) inp.value = row.digits ? formatHMSFromDigits(row.digits) : "";
+    if (mode === "realtime") realtimeReady = false;
+    updateDisplay();
+  }
+
+  function doClear() {
+    realtimeReady     = false;
+    realtimeBaseStr   = "";
+    realtimeResultStr = "";
+    rows = [];
+    rowCounter = 0;
+    addRow("+");  // A
+    addRow("+");  // B
+    displayEl.textContent = "00:00:00";
+    subDisplayEl.classList.add("hidden");
+    formulaDisplayEl.classList.add("hidden");
+    setActiveRow(rows[0].id);
+    renderRows();
+  }
+
+  /* ─── Op / action handlers ─── */
+  function handleOp(op) {
+    const row = getActiveRow();
+    if (op === "add" || op === "sub") {
+      // Set active row's operator (A is always +)
+      if (row && row.label !== "A") {
+        row.op = op === "add" ? "+" : "-";
+        renderRows();
+        setActiveRow(row.id);
+        updateDisplay();
+      } else {
+        // A row: move to next row
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx < rows.length - 1) setActiveRow(rows[idx + 1].id);
+      }
+    } else if (op === "calc") {
+      const txt = displayEl.textContent.trim();
+      if (mode === "realtime") {
+        let total = 0;
+        for (const row of rows) {
+          if (!row.digits) continue;
+          const hms = formatHMSFromDigits(row.digits);
+          const sec = parseTime(hms);
+          if (sec === null) continue;
+          total += row.op === "+" ? sec : -sec;
+        }
+        const nowSec = getCurrentTimeSec();
+        const resultSec = ((nowSec + total) % 86400 + 86400) % 86400;
+        realtimeReady     = true;
+        realtimeBaseStr   = formatTime(nowSec);
+        realtimeResultStr = formatTime(resultSec);
+        updateDisplay();
+      } else {
+        const sec = parseTime(txt);
+        if (sec === null) { showToast("入力してください"); return; }
+        const abs  = Math.abs(sec);
+        const sign = sec < 0 ? "−" : "";
+        const mins = Math.floor(abs / 60);
+        showToast(`${txt}  (${sign}${mins.toLocaleString()}分)`);
+      }
+    }
+  }
+
+  function handleAction(action) {
+    switch (action) {
+      case "back":  doBack();  break;
+      case "clear": doClear(); break;
+
+      case "prevRow": {
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx > 0) setActiveRow(rows[idx - 1].id);
+        break;
+      }
+      case "nextRow": {
+        const idx = rows.findIndex(r => r.id === activeRowId);
+        if (idx < rows.length - 1) setActiveRow(rows[idx + 1].id);
+        break;
+      }
+
+      case "copyResultToA": {
+        if (mode === "realtime") { showToast("時間計算モードで使用してください"); return; }
+        const txt = displayEl.textContent.trim();
+        if (!txt.match(/^-?\d{2}:\d{2}:\d{2}$/)) { showToast("結果がありません"); return; }
+        const sec = parseTime(txt);
+        if (sec === null) { showToast("結果が不正です"); return; }
+        if (sec < 0) { showToast("負の値はコピーできません"); return; }
+
+        // Reset to 2 rows, put result in A
+        rows = [];
+        rowCounter = 0;
+        addRow("+"); // A
+        addRow("+"); // B
+        // Set A's value
+        const absTime = txt.replace(/^-/, "");
+        rows[0].digits = absTime.replace(/:/g, "");
+        renderRows();
+        const ainp = document.getElementById(rows[0].id + "-input");
+        if (ainp) ainp.value = absTime;
+        setActiveRow(rows[1].id); // focus B for next input
+        updateDisplay();
+        showToast("結果を A にコピーしました");
+        break;
+      }
+
+      case "colon":
+        showToast("数字を連続入力すると自動的に : が入ります");
+        break;
+    }
+  }
+
+  /* ─── Keypad click ─── */
+  keypadEl.addEventListener("click", e => {
+    const key = e.target.closest(".key");
+    if (!key) return;
+    const num    = key.getAttribute("data-num");
+    const op     = key.getAttribute("data-op");
+    const action = key.getAttribute("data-action");
+    if (num    !== null) appendDigit(num);
+    else if (op)         handleOp(op);
+    else if (action)     handleAction(action);
+  });
+
+  /* ─── Add row button ─── */
+  addRowBtnEl.addEventListener("click", () => addRow("+", true));
+
+  /* ─── Keyboard input ─── */
+  document.addEventListener("keydown", e => {
+    // Tab: row navigation / add row on last row
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const idx = rows.findIndex(r => r.id === activeRowId);
+      if (!e.shiftKey && idx === rows.length - 1 && idx > 0) {
+        addRow("+", true); // on last row (B or later): add new row
+      } else {
+        const nextIdx = e.shiftKey
+          ? Math.max(0, idx - 1)
+          : Math.min(rows.length - 1, idx + 1);
+        setActiveRow(rows[nextIdx].id);
+      }
+      return;
+    }
+    // Digits
+    if (/^[0-9]$/.test(e.key)) { appendDigit(e.key); return; }
+    // Operators
+    if (e.key === "+") { handleOp("add");  return; }
+    if (e.key === "-") { handleOp("sub");  return; }
+    if (e.key === "=" || e.key === "Enter") { handleOp("calc"); return; }
+    // Backspace / Clear
+    if (e.key === "Backspace") { doBack(); return; }
+    if (e.key === "c" || e.key === "C" || e.key === "Escape") { doClear(); return; }
+    // Row selection by label letter (A–J)
+    const letterIdx = LABELS.indexOf(e.key.toUpperCase());
+    if (letterIdx >= 0 && letterIdx < rows.length) {
+      setActiveRow(rows[letterIdx].id);
+      return;
+    }
+  });
+
+  /* ─── Init ─── */
+  addRow("+"); // Row A
+  addRow("+"); // Row B
+  setActiveRow(rows[0].id);
+
+  /* ─── Service Worker ─── */
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .then(() => console.log("SW registered"))
+        .catch(err => console.warn("SW registration failed:", err));
+    });
+  }
 </script>
 </body>
 </html>
