@@ -100,7 +100,7 @@
     }
     .header h1 {
       font-size: clamp(15px, 4vw, 17px);
-      font-weight: 7	00;
+      font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
       color: var(--text);
@@ -250,7 +250,7 @@
       flex: 1;
       padding: 10px 14px;
       border-radius: 10px;
-      border: 1	.5px solid var(--border);
+      border: 1.5px solid var(--border);
       background: var(--input-padding-bg, var(--input-bg));
       color: var(--text);
       font-family: 'Share Tech Mono', monospace;
@@ -297,7 +297,7 @@
     .add-row-btn {
       width: 100%;
       padding: clamp(8px, 2vw, 9px);
-      border-radius: 10	px;
+      border-radius: 10px;
       border: 1.5px dashed var(--border);
       background: transparent;
       color: var(--text-sub);
@@ -535,7 +535,357 @@
     <button class="key" data-num="1">1</button>
     <button class="key" data-num="2">2</button>
     <button class="key" data-num="3">3</button>
+    <button class="key" data-num="0">0</button>
   </div>
-  
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────
+const MAX_ROWS = 10;
+const LABELS = 'ABCDEFGHIJ';
+let rows = [];        // [{raw, sign, rowEl, inputEl}]
+let activeRowIdx = 0;
+let mode = 'duration';
+let toastTimer = null;
+
+// ── DOM refs ───────────────────────────────────────────────────────────────
+const display     = document.getElementById('display');
+const formulaEl   = document.getElementById('formulaDisplay');
+const subEl       = document.getElementById('subDisplay');
+const inputsCont  = document.getElementById('inputsContainer');
+const addRowBtn   = document.getElementById('addRowBtn');
+const themeToggle = document.getElementById('themeToggle');
+const themeIcon   = document.getElementById('themeIcon');
+const themeLabel  = document.getElementById('themeLabel');
+const modeToggle  = document.getElementById('modeToggle');
+const keypad      = document.getElementById('keypad');
+const html        = document.documentElement;
+
+// toast element
+const toast = document.createElement('div');
+toast.className = 'toast';
+document.body.appendChild(toast);
+
+// ── Time helpers ───────────────────────────────────────────────────────────
+function formatRaw(raw) {
+  const p = raw.padStart(6, '0');
+  return `${p.slice(0,2)}:${p.slice(2,4)}:${p.slice(4,6)}`;
+}
+
+function rawToSeconds(raw) {
+  const p = raw.padStart(6, '0');
+  return parseInt(p.slice(0,2),10)*3600
+       + parseInt(p.slice(2,4),10)*60
+       + parseInt(p.slice(4,6),10);
+}
+
+function secondsToDisplay(total) {
+  const neg = total < 0;
+  const abs = Math.abs(total);
+  const hh  = Math.floor(abs / 3600);
+  const mm  = Math.floor((abs % 3600) / 60);
+  const ss  = abs % 60;
+  const s   = `${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  return neg ? `−${s}` : s;
+}
+
+function secondsToRaw(secs) {
+  const abs = Math.abs(secs);
+  const hh  = Math.min(Math.floor(abs / 3600), 99);
+  const mm  = Math.floor((abs % 3600) / 60);
+  const ss  = abs % 60;
+  return `${String(hh).padStart(2,'0')}${String(mm).padStart(2,'0')}${String(ss).padStart(2,'0')}`;
+}
+
+// ── Theme ──────────────────────────────────────────────────────────────────
+function applyTheme(theme) {
+  html.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  if (theme === 'dark') {
+    themeIcon.textContent = '☀️';
+    themeLabel.textContent = 'Light';
+  } else {
+    themeIcon.textContent = '🌙';
+    themeLabel.textContent = 'Dark';
+  }
+}
+
+themeToggle.addEventListener('click', () => {
+  applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+});
+
+applyTheme(localStorage.getItem('theme') || 'dark');
+
+// ── Mode toggle ────────────────────────────────────────────────────────────
+modeToggle.addEventListener('click', (e) => {
+  const btn = e.target.closest('.mode-btn');
+  if (!btn) return;
+  const next = btn.dataset.mode;
+  if (next === mode) return;
+  mode = next;
+  modeToggle.querySelectorAll('.mode-btn').forEach(b =>
+    b.classList.toggle('active', b.dataset.mode === mode)
+  );
+  recalculate();
+});
+
+// ── Row creation ───────────────────────────────────────────────────────────
+function createRowEl(idx, sign) {
+  const isFirst = idx === 0;
+  const label = LABELS[idx];
+  const div = document.createElement('div');
+  div.className = 'input-row new';
+
+  if (isFirst) {
+    const sp = document.createElement('div');
+    sp.className = 'op-spacer';
+    div.appendChild(sp);
+  } else {
+    const opBtn = document.createElement('button');
+    opBtn.className = `op-toggle${sign === '-' ? ' minus' : ''}`;
+    opBtn.dataset.sign = sign;
+    opBtn.textContent = sign;
+    opBtn.addEventListener('click', () => {
+      const row = rows.find(r => r.rowEl === div);
+      if (!row) return;
+      row.sign = row.sign === '+' ? '-' : '+';
+      opBtn.dataset.sign = row.sign;
+      opBtn.textContent = row.sign;
+      opBtn.classList.toggle('minus', row.sign === '-');
+      setActive(rows.indexOf(row));
+      recalculate();
+    });
+    div.appendChild(opBtn);
+  }
+
+  const labelEl = document.createElement('span');
+  labelEl.className = 'input-label';
+  labelEl.textContent = label;
+  div.appendChild(labelEl);
+
+  const input = document.createElement('input');
+  input.type = 'text';
+  input.setAttribute('inputmode', 'none');
+  input.readOnly = true;
+  input.value = '00:00:00';
+  input.placeholder = '00:00:00';
+  input.setAttribute('aria-label', `行 ${label}`);
+  input.addEventListener('focus', () => setActive(rows.findIndex(r => r.rowEl === div)));
+  input.addEventListener('pointerdown', (e) => { e.preventDefault(); input.focus(); });
+  div.appendChild(input);
+
+  if (isFirst) {
+    const sp = document.createElement('div');
+    sp.className = 'del-spacer';
+    div.appendChild(sp);
+  } else {
+    const delBtn = document.createElement('button');
+    delBtn.className = 'del-row';
+    delBtn.textContent = '×';
+    delBtn.setAttribute('aria-label', `行 ${label} を削除`);
+    delBtn.addEventListener('click', () => {
+      const rowIdx = rows.findIndex(r => r.rowEl === div);
+      if (rowIdx > 0) deleteRow(rowIdx);
+    });
+    div.appendChild(delBtn);
+  }
+
+  return { rowEl: div, inputEl: input };
+}
+
+// ── Row management ─────────────────────────────────────────────────────────
+function addRow(sign = '+') {
+  if (rows.length >= MAX_ROWS) { showToast('最大10行まで'); return; }
+  const idx = rows.length;
+  const { rowEl, inputEl } = createRowEl(idx, sign);
+  rows.push({ raw: '', sign: idx === 0 ? '+' : sign, rowEl, inputEl });
+  inputsCont.appendChild(rowEl);
+  addRowBtn.disabled = rows.length >= MAX_ROWS;
+  setActive(idx);
+  recalculate();
+}
+
+function deleteRow(idx) {
+  if (idx <= 0 || idx >= rows.length) return;
+  const snapshot = rows.map(r => ({ raw: r.raw, sign: r.sign }));
+  snapshot.splice(idx, 1);
+  rows = [];
+  inputsCont.innerHTML = '';
+  snapshot.forEach((s, i) => {
+    const { rowEl, inputEl } = createRowEl(i, s.sign);
+    rows.push({ raw: s.raw, sign: s.sign, rowEl, inputEl });
+    inputEl.value = s.raw ? formatRaw(s.raw) : '00:00:00';
+    inputsCont.appendChild(rowEl);
+  });
+  addRowBtn.disabled = rows.length >= MAX_ROWS;
+  setActive(Math.min(activeRowIdx, rows.length - 1));
+  recalculate();
+}
+
+// ── Active row ─────────────────────────────────────────────────────────────
+function setActive(idx) {
+  if (idx < 0 || idx >= rows.length) return;
+  activeRowIdx = idx;
+  rows.forEach((r, i) => r.inputEl.classList.toggle('active-field', i === activeRowIdx));
+  rows[activeRowIdx].inputEl.focus({ preventScroll: true });
+}
+
+function navigateRow(delta) {
+  setActive((activeRowIdx + delta + rows.length) % rows.length);
+}
+
+function selectRowByLabel(label) {
+  const idx = LABELS.indexOf(label.toUpperCase());
+  if (idx >= 0 && idx < rows.length) setActive(idx);
+}
+
+// ── Input logic ────────────────────────────────────────────────────────────
+function inputDigit(d) {
+  const row = rows[activeRowIdx];
+  if (!row || row.raw.length >= 6) return;
+  row.raw += d;
+  row.inputEl.value = formatRaw(row.raw);
+  recalculate();
+}
+
+function backspace() {
+  const row = rows[activeRowIdx];
+  if (!row || row.raw.length === 0) return;
+  row.raw = row.raw.slice(0, -1);
+  row.inputEl.value = row.raw ? formatRaw(row.raw) : '00:00:00';
+  recalculate();
+}
+
+function clearActive() {
+  const row = rows[activeRowIdx];
+  if (!row) return;
+  if (row.raw !== '') {
+    row.raw = '';
+    row.inputEl.value = '00:00:00';
+  } else {
+    rows.forEach(r => { r.raw = ''; r.inputEl.value = '00:00:00'; });
+  }
+  recalculate();
+}
+
+function setSign(sign) {
+  if (activeRowIdx === 0) return;
+  const row = rows[activeRowIdx];
+  if (!row) return;
+  row.sign = sign;
+  const opBtn = row.rowEl.querySelector('.op-toggle');
+  if (opBtn) {
+    opBtn.dataset.sign = sign;
+    opBtn.textContent = sign;
+    opBtn.classList.toggle('minus', sign === '-');
+  }
+  recalculate();
+}
+
+// ── Calculation ────────────────────────────────────────────────────────────
+function recalculate() {
+  if (rows.length === 0) {
+    display.textContent = '00:00:00';
+    formulaEl.classList.add('hidden');
+    subEl.classList.add('hidden');
+    return;
+  }
+
+  let total = 0;
+  const parts = [];
+  rows.forEach((row, i) => {
+    const secs = rawToSeconds(row.raw);
+    total += row.sign === '-' ? -secs : secs;
+    parts.push(i === 0 ? formatRaw(row.raw) : `${row.sign === '-' ? '−' : '+'} ${formatRaw(row.raw)}`);
+  });
+
+  if (mode === 'realtime') {
+    total = ((total % 86400) + 86400) % 86400;
+  }
+
+  display.textContent = secondsToDisplay(total);
+
+  if (rows.length > 1) {
+    formulaEl.textContent = parts.join(' ');
+    formulaEl.classList.remove('hidden');
+  } else {
+    formulaEl.classList.add('hidden');
+  }
+
+  const absMin = Math.floor(Math.abs(total) / 60);
+  if (absMin > 0 && mode === 'duration') {
+    subEl.textContent = `= ${total < 0 ? '−' : ''}${absMin} 分`;
+    subEl.classList.remove('hidden');
+  } else {
+    subEl.classList.add('hidden');
+  }
+}
+
+// ── Copy result to row A ───────────────────────────────────────────────────
+function copyResultToA() {
+  let total = 0;
+  rows.forEach(row => {
+    total += row.sign === '-' ? -rawToSeconds(row.raw) : rawToSeconds(row.raw);
+  });
+  if (mode === 'realtime') total = ((total % 86400) + 86400) % 86400;
+  if (total < 0) { showToast('マイナス値はコピー不可'); return; }
+
+  rows[0].raw = secondsToRaw(total);
+  rows[0].inputEl.value = formatRaw(rows[0].raw);
+  rows.slice(1).forEach(r => { r.raw = ''; r.inputEl.value = '00:00:00'; });
+  setActive(0);
+  recalculate();
+  showToast('結果を行Aにコピーしました');
+}
+
+// ── Toast ──────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 2000);
+}
+
+// ── Keypad ─────────────────────────────────────────────────────────────────
+keypad.addEventListener('click', (e) => {
+  const key = e.target.closest('.key');
+  if (!key) return;
+  if (key.dataset.num !== undefined) {
+    inputDigit(key.dataset.num);
+  } else if (key.dataset.action) {
+    switch (key.dataset.action) {
+      case 'prevRow':       navigateRow(-1);    break;
+      case 'nextRow':       navigateRow(1);     break;
+      case 'clear':         clearActive();      break;
+      case 'copyResultToA': copyResultToA();    break;
+    }
+  } else if (key.dataset.op) {
+    setSign(key.dataset.op === 'add' ? '+' : '-');
+  }
+});
+
+// ── Keyboard ───────────────────────────────────────────────────────────────
+document.addEventListener('keydown', (e) => {
+  if (e.target.tagName === 'INPUT' && !rows.some(r => r.inputEl === e.target)) return;
+  if (e.key >= '0' && e.key <= '9')       { inputDigit(e.key); e.preventDefault(); }
+  else if (e.key === '+')                  { setSign('+');       e.preventDefault(); }
+  else if (e.key === '-')                  { setSign('-');       e.preventDefault(); }
+  else if (e.key === 'Enter')              { navigateRow(1);     e.preventDefault(); }
+  else if (e.key === 'Backspace')          { backspace();        e.preventDefault(); }
+  else if (e.key === 'c' || e.key === 'C'){ clearActive();      e.preventDefault(); }
+  else if (e.key === 'Tab')               { navigateRow(e.shiftKey ? -1 : 1); e.preventDefault(); }
+  else if (/^[a-jA-J]$/.test(e.key))     { selectRowByLabel(e.key); e.preventDefault(); }
+});
+
+// ── Add row button ─────────────────────────────────────────────────────────
+addRowBtn.addEventListener('click', () => addRow());
+
+// ── Service Worker ─────────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js'));
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+addRow();
+</script>
 </body>
 </html>
