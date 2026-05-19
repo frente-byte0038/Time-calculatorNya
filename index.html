@@ -73,7 +73,7 @@
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      padding: 24px 12px 48px;
+      padding: clamp(12px, 4vw, 24px) 12px clamp(24px, 7vw, 48px);
       transition: background 0.3s, color 0.3s;
     }
 
@@ -82,7 +82,7 @@
       max-width: 400px;
       background: var(--surface);
       border-radius: 24px;
-      padding: 20px;
+      padding: clamp(14px, 4vw, 20px);
       box-shadow: var(--shadow);
       border: 1px solid var(--border);
       transition: background 0.3s, box-shadow 0.3s;
@@ -93,10 +93,10 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 18px;
+      margin-bottom: clamp(12px, 3vw, 18px);
     }
     .header h1 {
-      font-size: 17px;
+      font-size: clamp(14px, 4vw, 17px);
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -140,9 +140,9 @@
       background: var(--display-bg);
       color: var(--display-fg);
       font-family: 'Share Tech Mono', monospace;
-      font-size: 42px;
+      font-size: clamp(28px, 10vw, 42px);
       letter-spacing: 0.08em;
-      padding: 18px 20px 10px;
+      padding: clamp(12px, 4vw, 18px) clamp(12px, 5vw, 20px) 10px;
       border-radius: 16px 16px 0 0;
       text-align: right;
       box-shadow: var(--display-glow), inset 0 2px 8px rgba(0,0,0,0.4);
@@ -155,15 +155,15 @@
     .sub-display {
       background: var(--display-bg);
       border-radius: 0 0 16px 16px;
-      padding: 4px 20px 12px;
+      padding: 4px clamp(12px, 5vw, 20px) 12px;
       text-align: right;
-      margin-bottom: 14px;
+      margin-bottom: clamp(10px, 3vw, 14px);
       min-height: 28px;
       border-top: 1px solid #ffffff0a;
     }
     .formula-text {
       font-family: 'Share Tech Mono', monospace;
-      font-size: 20px;
+      font-size: clamp(14px, 5vw, 20px);
       color: #39ff6ecc;
       letter-spacing: 0.05em;
       padding: 2px 0 4px;
@@ -185,13 +185,13 @@
     .inputs {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: clamp(5px, 2vw, 8px);
       margin-bottom: 8px;
     }
     .input-row {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: clamp(5px, 2vw, 8px);
       transition: opacity 0.2s;
     }
 
@@ -241,13 +241,13 @@
 
     input[type="text"] {
       flex: 1;
-      padding: 10px 14px;
+      padding: clamp(7px, 2.5vw, 10px) clamp(10px, 3.5vw, 14px);
       border-radius: 10px;
       border: 1.5px solid var(--border);
       background: var(--input-bg);
       color: var(--text);
       font-family: 'Share Tech Mono', monospace;
-      font-size: 20px;
+      font-size: clamp(16px, 5vw, 20px);
       letter-spacing: 0.06em;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s, background 0.3s;
@@ -291,17 +291,17 @@
     /* ── Add row button ── */
     .add-row-btn {
       width: 100%;
-      padding: 9px;
+      padding: clamp(7px, 2.5vw, 9px);
       border-radius: 10px;
       border: 1.5px dashed var(--border);
       background: transparent;
       color: var(--text-sub);
       font-family: 'Outfit', sans-serif;
-      font-size: 13px;
+      font-size: clamp(11px, 3.5vw, 13px);
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s;
-      margin-bottom: 14px;
+      margin-bottom: clamp(10px, 3vw, 14px);
       letter-spacing: 0.04em;
     }
     .add-row-btn:hover {
@@ -337,16 +337,16 @@
     .keypad {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
+      gap: clamp(5px, 2vw, 8px);
       -webkit-user-select: none; user-select: none;
     }
     .key {
       padding: 0;
-      height: 62px;
+      height: clamp(48px, 14vw, 62px);
       border-radius: 14px;
       border: 1px solid var(--border);
       font-family: 'Outfit', sans-serif;
-      font-size: 20px;
+      font-size: clamp(16px, 5vw, 20px);
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s, transform 0.08s, box-shadow 0.15s;
@@ -359,7 +359,7 @@
     }
     .key.util {
       background: var(--key-util);
-      font-size: 13px;
+      font-size: clamp(10px, 3.5vw, 13px);
       font-weight: 700;
       letter-spacing: 0.04em;
       color: var(--text-sub);
@@ -413,11 +413,6 @@
     }
     .input-row.new {
       animation: rowIn 0.2s ease forwards;
-    }
-
-    @media (max-width: 380px) {
-      .display { font-size: 34px; }
-      .key { height: 54px; font-size: 18px; }
     }
 
     /* ── Mode toggle ── */
