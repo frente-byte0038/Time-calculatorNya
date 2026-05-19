@@ -312,18 +312,40 @@
 
     /* ── Keyboard hint ── */
     .kb-hint {
-      display: flex;
-      align-items: center;
-      gap: 6px;
       font-size: 11px;
       color: var(--text-sub);
       margin-bottom: 14px;
-      padding: 6px 10px;
       background: var(--surface2);
       border-radius: 8px;
       border: 1px solid var(--border);
-      flex-wrap: wrap;
     }
+    .kb-hint-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 6px 10px;
+      background: transparent;
+      border: none;
+      color: var(--text-sub);
+      font-family: 'Outfit', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      -webkit-user-select: none; user-select: none;
+    }
+    .kb-hint-arrow {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+    .kb-hint.open .kb-hint-arrow { transform: rotate(90deg); }
+    .kb-hint-body {
+      display: none;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 0 10px 8px;
+    }
+    .kb-hint.open .kb-hint-body { display: flex; }
     .kb-hint .tag {
       background: var(--key-util);
       border: 1px solid var(--border);
@@ -491,15 +513,20 @@
   <button class="add-row-btn" id="addRowBtn">＋ 行を追加 (最大10行)</button>
 
   <div class="kb-hint" id="kbHint">
-    <span>⌨️</span>
-    <span class="tag">0–9</span>
-    <span class="tag">+</span>
-    <span class="tag">-</span>
-    <span class="tag">Enter</span>
-    <span class="tag">⌫</span>
-    <span class="tag">C</span>
-    <span class="tag">Tab で行切替</span>
-    <span class="tag">A〜J で行選択</span>
+    <button class="kb-hint-toggle" id="kbHintToggle">
+      <span>⌨️ ショートカット</span>
+      <span class="kb-hint-arrow">▸</span>
+    </button>
+    <div class="kb-hint-body" id="kbHintBody">
+      <span class="tag">0–9</span>
+      <span class="tag">+</span>
+      <span class="tag">-</span>
+      <span class="tag">Enter</span>
+      <span class="tag">⌫</span>
+      <span class="tag">C</span>
+      <span class="tag">Tab で行切替</span>
+      <span class="tag">A〜J で行選択</span>
+    </div>
   </div>
 
   <div class="keypad" id="keypad">
@@ -579,8 +606,7 @@
     return now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   }
 
-  const HINT_DURATION = `<span>⌨️</span>
-    <span class="tag">0–9</span>
+  const HINT_DURATION = `<span class="tag">0–9</span>
     <span class="tag">+</span>
     <span class="tag">-</span>
     <span class="tag">Enter</span>
@@ -589,20 +615,29 @@
     <span class="tag">Tab で行切替</span>
     <span class="tag">A〜J で行選択</span>`;
 
-  const HINT_REALTIME = `<span>⏱</span>
-    <span class="tag">0–9</span> で加算時間を入力
+  const HINT_REALTIME = `<span class="tag">0–9</span> で加算時間を入力
     <span class="tag">=</span> で現在時刻に加算（サブ表示に基準時刻を固定表示）
     <span class="tag">C</span> でリセット
     <span class="tag">Tab</span> で行切替`;
 
-  const kbHintEl = document.getElementById("kbHint");
+  const kbHintEl     = document.getElementById("kbHint");
+  const kbHintBodyEl = document.getElementById("kbHintBody");
+
+  /* ─── KB hint toggle ─── */
+  document.getElementById("kbHintToggle").addEventListener("click", () => {
+    const open = kbHintEl.classList.toggle("open");
+    localStorage.setItem("kbHintOpen", open ? "1" : "0");
+  });
+  if (localStorage.getItem("kbHintOpen") === "1") {
+    kbHintEl.classList.add("open");
+  }
 
   function setMode(m) {
     mode = m;
     document.querySelectorAll(".mode-btn").forEach(btn => {
       btn.classList.toggle("active", btn.getAttribute("data-mode") === m);
     });
-    kbHintEl.innerHTML = m === "realtime" ? HINT_REALTIME : HINT_DURATION;
+    kbHintBodyEl.innerHTML = m === "realtime" ? HINT_REALTIME : HINT_DURATION;
     realtimeReady     = false;
     realtimeBaseStr   = "";
     realtimeResultStr = "";
