@@ -1,9 +1,9 @@
-# ⏱ Time Calc v2.2
+# TCcalNya v2.2
 
 HH:MM:SS 形式の時間を加算・減算できる Web アプリ。  
 放送局のタイムキーパーや動画編集者、タスク管理向けに設計されています。
 
-🔗 **[Live Demo](https://frente-byte0038.github.io/Time-calculatorNya/)**
+🔗 **[Live Demo](https://frente-byte0038.github.io/TCcalNya/)**
 
 ---
 
@@ -38,7 +38,7 @@ HH:MM:SS 形式の時間を加算・減算できる Web アプリ。
 
 ## 使い方
 
-1. ブラウザで [Live Demo](https://frente-byte0038.github.io/Time-calculatorNya/) を開く
+1. ブラウザで [Live Demo](https://frente-byte0038.github.io/TCcalNya/) を開く
 2. キーパッドまたはキーボードで時間を入力（例：`1`, `3`, `0`, `0`, `0` → `00:01:30:00`... → `01:30:00`）
 3. `＋ 行を追加` で行を増やし、各行に時間と符号（+/−）を設定
 4. メインディスプレイに合計が即時表示される

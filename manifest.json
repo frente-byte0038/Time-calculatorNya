@@ -1,6 +1,6 @@
 {
-  "name": "Time Calculator",
-  "short_name": "TimeCal",
+  "name": "TCcalNya",
+  "short_name": "TCcalNya",
   "description": "HH:MM:SS の時間加算・減算ツール",
   "start_url": "./index.html",
   "display": "standalone",
